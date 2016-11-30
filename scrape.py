@@ -88,7 +88,7 @@ class NewHaven:
 			results = self.soup.find('div', {'class' : 'search-results-content'})
 			results = results.find_all('a', {'class' : 'biz-name'})
 			for result in results:
-				self.restaurants.append(result['href'].split('/')[-1])
+				self.restaurants.append(urlparse.urlparse(result['href'].split('/')[-1]).path)
 			start += 10
 
 	def get_restaurants(self):
@@ -102,17 +102,17 @@ def to_csv():
 	rev_header = [['rid', 'uid', 'rating']]
 	rev_data = []
 
-	nh = NewHaven(pages=1)
+	nh = NewHaven(pages=10)
 	restaurants = nh.get_restaurants()
-	for restaurant in restaurants[1:]:
+	for restaurant in restaurants:
 		try:
 			r = Restaurant(restaurant)
 			r_data.append([restaurant, 
-							r.get_name(), 
-							r.get_price(), 
-							r.get_location()[0], 
-							r.get_location()[1],
-							r.get_rating()])
+				r.get_name(), 
+				r.get_price(), 
+				r.get_location()[0], 
+				r.get_location()[1],
+				r.get_rating()])
 			for c in r.get_categories():
 				l_data.append([restaurant, c])
 			for rev in r.get_reviews():
