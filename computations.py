@@ -9,21 +9,24 @@ def main():
 	cur = con.cursor()
 
 	'''
-	TODO: Grab the username from input
+	Grab the username from input
 	'''
 	print('What is your name?')
-	username = raw_input()
+	try:
+		username = raw_input()
+	except EOFError:
+		exit()
+
 	print('Signing in as ' + username)		
 
-	userid = "temp"
-
 	'''
-	TODO: With that username, grab that person's favorites
+	With that username, grab that person's favorites
 	'''
 
 	# Create set of id's of favorite restaurants for user
 	favoriteIdsSet = set()
-	favorites = cur.execute("SELECT RestaurantId FROM  favorites WHERE UserId = userid")
+	favorites = cur.execute("SELECT RestaurantId FROM  favorites WHERE UserId = ?", username)
+	con.commit()
 	for favorite in favorites:
 		favoriteIdsSet.add(favorite)
 
@@ -45,12 +48,18 @@ def main():
 
 	# Find restaurant with minimum distance
 	minDist = sys.maxint
-	currMin = 0
+	currSum = 0
 	minRest = None
 
 	for notFav in notFavoriteSet:
+		labelsNotFav = cur.execute("SELECT * FROM labels WHERE RestaurantId = %i", (notFav["RestaurantId"]))
 		for fav in favoriteSet:
-			minDist = 0
+			labelsFav = cur.execute("SELECT * FROM labels WHERE RestaurantId = %i", (fav["RestaurantId"]))
+			currSum += dist(notFav,fav,labelsNotFav,labelsFav)
+		if minDist > currSum:
+			minDist = currSum
+			minRest = notFav
+		currSum = 0
 
 	'''
 	TODO: Incorporate user data
@@ -94,13 +103,37 @@ def actions():
 			print('Eat up!')
 			exit()
 
-def dist(rest1, rest2):
-	return
 
-def get_recommendations(username):
+def dist(rest1, rest2, rest1Labels, rest2Labels):
+	# TODO: make this distance incorporate PCA values
 	
+	physicalDist = (abs(rest1["Latitude"]-rest2["Latitude"]) ** 2 + abs(rest1["Longitude"]-rest2["Longitude"]) ** 2) ** (0.5)
+	ratingDiff = abs(rest1["Rating"]-rest2["Rating"])
+	priceDiff = abs(rest1["Price"]-rest2["Price"])
+
+	rest1LabelList = []
+	rest2LabelList = []
+	for lab in rest1Labels:
+		rest1LabelList.add(lab["Label"])
+	for lab in rest2Labels:
+		rest2LabelList.add(lab["Label"])
+
+	labeldiff = 0
+
+	for lab in rest1LabeList:
+		if lab not in rest2LabelList:
+			labeldiff += 1
+
+	for lab in rest2LabeList:
+		if lab not in rest1LabelList:
+			labeldiff += 1
+
+	return 100*physicalDist + 10*ratingDiff + 5*priceDiff + labeldiff
+	
+def get_recommendations(username):
 	recs = list()
-	# for restId in recommendations
+	'''TODO get recommends based on favorites based on username'''
+	# for restId in recommends
 		# cur.execute("SELECT Name, Price, Rating FROM Restaurants WHERE RestaurantId=?", restId)
 		# list.append(cur.fetchone())
 	''' hardcoded sample '''
