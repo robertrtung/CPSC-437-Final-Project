@@ -11,7 +11,7 @@ myapp = oauth_app("YELP", key=consumerKey, secret=consumerSecret)
 sig=sign_oauth1.0(myapp, token=token,token_secret=token_secret)
 
 ########
-yelp_scrape <- function(term, location, limit=10) {
+yelp_scrape <- function(term, location, limit=10, offset = 0) {
   myapp <- oauth_app("YELP", key=consumerKey, secret=consumerSecret)
   sig <- sign_oauth1.0(myapp, token=token, token_secret=token_secret)
   
