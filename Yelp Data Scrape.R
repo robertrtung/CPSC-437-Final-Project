@@ -21,11 +21,14 @@ yelp_scrape <- function(term, location, limit=40, offset = 0) {
                        Price=NA, Latitude=temp$businesses.location[[7]][1], Longitude=temp$businesses.location[[7]][2])
   ids <- unlist(temp$businesses.id)
   for(i in 1:nrow(output)){
-    output$ID[i] <- i
+    output$ID[i] <- i+offset
     res <- GET(paste("https://api.yelp.com/v3/businesses/", ids[i], sep=""), add_headers(Authorization=paste("Bearer", v3Token)))
     extractRes = content(res)
     Sys.sleep(.1)
-    output$Price[i] <- nchar(extractRes$price)
+    price <- length(extractRes$price)
+    if(price > 0) {
+      output$Price[i] <- price
+    }
   }
   return(output)
 }
