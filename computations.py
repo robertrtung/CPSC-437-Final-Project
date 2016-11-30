@@ -79,6 +79,7 @@ def compute_recs(username, numRecs):
 	TODO: Incorporate friend data
 	'''
 
+	return minRests
 	conUsers.close()
 
 
