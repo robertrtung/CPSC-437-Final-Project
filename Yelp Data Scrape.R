@@ -1,7 +1,3 @@
-consumerKey = "JmaomcAzFt7hKPNfS98NvQ"
-consumerSecret = "4-ZNGbGD18oKjUSnL2n9Bth-QJo"
-token = "hpbsaWY87YYNRYpr2gSH6eVyo9mhH_ZJ"
-token_secret = "TZfgmUZq3gIx5vFmEwyaMrf_7yU"
 
 library(httr)
 library(httpuv)
@@ -20,5 +16,19 @@ yelp_scrape <- function(term, location, limit=40, offset = 0) {
 
   extractResults = content(results)
   resultsList=jsonlite::fromJSON(toJSON(extractResults))
-  return(data.frame(resultsList))
+  temp <- data.frame(resultsList)
+  output <- data.frame(ID=NA, Name=unlist(temp$businesses.name), Rating=unlist(temp$businesses.rating), 
+                       Price=NA, Latitude=temp$businesses.location[[7]][1], Longitude=temp$businesses.location[[7]][2])
+  ids <- unlist(temp$businesses.id)
+  for(i in 1:nrow(output)){
+    output$ID[i] <- i+offset
+    res <- GET(paste("https://api.yelp.com/v3/businesses/", ids[i], sep=""), add_headers(Authorization=paste("Bearer", v3Token)))
+    extractRes = content(res)
+    Sys.sleep(.1)
+    price <- length(extractRes$price)
+    if(price > 0) {
+      output$Price[i] <- price
+    }
+  }
+  return(output)
 }
