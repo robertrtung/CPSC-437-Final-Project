@@ -1,20 +1,59 @@
 import sqlite3
 
-'''
-Grab the username from input
-'''
+con = sqlite3.connect('restaurantPredictions.db')
+cur = con.cursor()
 
 '''
-With that username, grab that person's favorites
+TODO: Grab the username from input
 '''
+
+userid = "temp"
+
+'''
+TODO: With that username, grab that person's favorites
+'''
+
+# Create set of id's of favorite restaurants for user
+favoriteIdsSet = set()
+favorites = cur.execute("SELECT RestaurantId FROM  favorites WHERE UserId = userid")
+for favorite in favorites:
+	favoriteIdsSet.add(favorite)
 
 
 '''
 Using the favorites, perform computations
 '''
-con = sqlite3.connect('test.db')
-cur = con.cursor()
-cur.executescript("")
+restaurants = cur.execute("SELECT * FROM restaurants")
 con.commit()
 
-con.close()
+# Create set of favorite and not favorite restaurants
+favoriteSet = set()
+notFavoriteSet = set()
+
+for restaurant in restaurants:
+	if restaurant["RestaurantId"] in favoriteIdsSet:
+		favoriteSet.add(restaurant)
+	else:
+		notFavoriteSet.add(restaurant)
+
+# Find restaurant with minimum distance
+minDist = sys.maxint
+currMin = 0
+minRest = None
+
+for notFav in notFavoriteSet:
+	for fav in favoriteSet:
+		minDist = 
+
+'''
+TODO: Incorporate user data
+'''
+
+'''
+TODO: Incorporate friend data
+'''
+
+conUsers.close()
+
+def dist(rest1, rest2):
+	
