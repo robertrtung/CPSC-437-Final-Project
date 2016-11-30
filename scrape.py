@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-import urllib2, urlparse
+import csv, urllib2, urlparse
 
 class Restaurant:
 	def __init__(self, id):
@@ -8,7 +8,7 @@ class Restaurant:
 		self.soup = BeautifulSoup(self.html, 'lxml')
 
 		self.name = [h1.text for h1 in self.soup.find_all('h1')][0].strip()
-		self.price = [span.text for span in self.soup.find_all('span', {'class' : 'price-range'})][0].strip()
+		self.price = len([span.text for span in self.soup.find_all('span', {'class' : 'price-range'})][0].strip())
 
 		category_span = self.soup.find('span', {'class' : 'category-str-list'})
 		self.categories = []
@@ -19,7 +19,7 @@ class Restaurant:
 		location_tag = location_tag.find('img')
 		location_gurl = location_tag['src']
 		location_gurl_query = urlparse.urlparse(location_gurl).query
-		self.location = urlparse.parse_qs(location_gurl_query)['center']
+		self.location = urlparse.parse_qs(location_gurl_query)['center'][0].split(',')
 		self.rating = None
 		self.reviews = []
 
@@ -73,7 +73,58 @@ class Restaurant:
 			self.retr_reviews()
 		return self.rating
 
+class NewHaven:
+	def __init__(self, pages=10):
+		self.restaurants = []
+		self.url = 'https://www.yelp.com/search?find_desc=Restaurants&find_loc=New+Haven,+CT&start='
+		start = 0
+		for i in xrange(pages):
+			self.html = urllib2.urlopen(self.url + str(start)).read()
+			self.soup = BeautifulSoup(self.html, 'lxml')
+			results = self.soup.find('div', {'class' : 'search-results-content'})
+			results = results.find_all('a', {'class' : 'biz-name'})
+			for result in results:
+				self.restaurants.append(result['href'].split('/')[-1])
+			start += 10
 
+	def get_restaurants(self):
+		return self.restaurants
 
-r = Restaurant('the-halal-guys-new-haven')
-print r.get_rating()
+def to_csv():
+	r_header = [['rid', 'name', 'price', 'lat', 'lng', 'rating']]
+	r_data = []
+	l_header = [['rid', 'label']]
+	l_data = []
+	rev_header = [['rid', 'uid', 'rating']]
+	rev_data = []
+
+	nh = NewHaven(pages=1)
+	restaurants = nh.get_restaurants()
+	for restaurant in restaurants:
+		try:
+			r = Restaurant(restaurant)
+			r_data.append([restaurant, 
+							r.get_name(), 
+							r.get_price(), 
+							r.get_location()[0], 
+							r.get_location()[1],
+							r.get_rating()])
+			for c in r.get_categories():
+				l_data.append([restaurant, c])
+			for rev in r.get_reviews():
+				rev_data.append([restaurant, rev[0], rev[1]])
+		except:
+			pass
+
+	with open('restaurants.csv', 'w') as f:
+		writer = csv.writer(f)
+		writer.writerows(r_header + r_data)
+	with open('labels.csv', 'w') as f:
+		writer = csv.writer(f)
+		writer.writerows(l_header + l_data)
+	with open('reviews.csv', 'w') as f:
+		writer = csv.writer(f)
+		writer.writerows(rev_header + rev_data)
+
+if __name__ == '__main__':
+	to_csv()
