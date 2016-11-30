@@ -1,7 +1,7 @@
 import sqlite3
 import sys
 
-def compute_recs(username, numRecs):
+def compute_personal_recs(username, numRecs, con, cur):
 
 	'''
 	With that username, grab that person's favorites
@@ -72,15 +72,34 @@ def compute_recs(username, numRecs):
 		currSum = 0
 
 	'''
-	TODO: Incorporate user data
+	Incorporate user data
 	'''
+	currentUser = cur.execute("SELECT * FROM Users WHERE UserId = ?", username)
+	ageGenderUsers = cur.execute("SELECT UserId FROM Users WHERE Age = ? AND Gender = ?", currentUser["Age"], currentUser["Gender"])
+	con.commit()
+
+	ageGenderRests = []
+
+	for user in ageGenderUsers:
+		ageGenderRests = ageGenderRests + cur.execute("SELECT RestaurantId FROM Favorites WHERE UserId", user)
+
+	find_most_common(ageGenderRests, numRecs)
 
 	'''
-	TODO: Incorporate friend data
+	Incorporate friend data
 	'''
+	friendUsers = cur.execute("SELECT UserId2 FROM Friends WHERE UserId1 = ?", username)
+	con.commit()
 
-	return minRests
-	conUsers.close()
+	friendRests = []
+
+	for user in friendUsers:
+		friendRests = friendRests + cur.execute("SELECT RestaurantId FROM Favorites WHERE UserId = ?", user)
+
+	find_most_common(friendRests, numRecs)
+
+	# Return all recommendations
+	return [minRests,ageGenderRests,friendRests]
 
 
 def dist(rest1, rest2, rest1Labels, rest2Labels):
@@ -107,7 +126,10 @@ def dist(rest1, rest2, rest1Labels, rest2Labels):
 
 	# TODO: make this distance incorporate PCA values
 	return 100*physicalDist + 10*ratingDiff + 5*priceDiff + labeldiff
-	
+
+'''
+Sort starting from from_index so that the remainder of the array is in order from greatest to least
+'''
 def min_sort(dists, rests, from_index):
 	j = from_index
 	for i in range(from_index,len(dists)):
@@ -118,8 +140,16 @@ def min_sort(dists, rests, from_index):
 		else:
 			break
 
+'''
+Check whether any of the values in the list are None and if so return the index
+'''
 def empty(dists):
 	for i in range(len(dists)):
 		if dists[len(dists) - 1 - i] == None:
 			return len(dists) - 1 - i
 	return -1
+
+'''
+Find the numRecs most common values in the list
+'''
+def find_most_common(rests, numRecs):
