@@ -24,7 +24,6 @@ def main():
 
 	actions()
 
-
 def actions():
 	while(True):
 		try:
@@ -40,8 +39,13 @@ def actions():
 					i += 1
 
 			elif (action == 'B'):
-				print('Here are you favorites')
-				''' TODO: Query DB for favorites based on username'''
+				print('Here are you favorites:')
+				'''Query DB for favorites based on username'''
+				recs = get_favorites(username)
+				i = 1
+				for rec in recs:
+					print('{}.' + rec['name'] + '\n\t Price: {}\n\t Rating: {}').format(i, rec['price'], rec['rating'])
+					i += 1
 			elif (action == 'C'):
 				print('Which restaurant would you like to favorite?')
 				''' TODO: Add restaurant as favorite for username'''
@@ -61,14 +65,35 @@ def get_recommendations(username):
 	recs = list()
 	'''TODO get recommends based on favorites based on username'''
 	# for restId in recommends
-		# cur.execute("SELECT Name, Price, Rating FROM Restaurants WHERE RestaurantId=?", restId)
-		# list.append(cur.fetchone())
+		# add = dict()
+		# rest = cur.execute("SELECT Name, Price, Rating FROM Restaurants WHERE RestaurantId=?", restId)
+		# add['name'] = rest[0]
+		# add['price'] = int(rest[1])
+		# add['rating'] = float(rest[2])
+		# recs.append(add)
 	''' hardcoded sample '''
 	restaurant = {'name': 'Halal Guys', 'price': 2, 'rating': 4.5}
 	recs.append(restaurant)
 	restaurant = {'name': 'Chipotle', 'price': 1, 'rating': 3}
 	recs.append(restaurant)
 	return recs
+
+def get_favorites(username):
+	favorites = list()
+	# add = dict()
+	# favs = cur.execute("SELECT Name, Price, Rating FROM Restaurants, Favorites WHERE Restaurants.RestaurantId=Favorites.RestaurantId and UserId=?", username)
+	# for fav in favs:
+		# add['name'] = fav[0]
+		# add['price'] = int(fav[1])
+		# add['rating'] = float(fav[2])
+		# favorites.append(add)
+	restaurant = {'name': 'Halal Guys', 'price': 2, 'rating': 4.5}
+	favorites.append(restaurant)
+	restaurant = {'name': 'Chipotle', 'price': 1, 'rating': 3}
+	favorites.append(restaurant)
+
+	return favorites;
+
 
 if __name__ == "__main__":
 	main()
