@@ -83,7 +83,11 @@ def compute_personal_recs(username, numRecs, con, cur):
 	for user in ageGenderUsers:
 		ageGenderRests = ageGenderRests + cur.execute("SELECT RestaurantId FROM Favorites WHERE UserId", user)
 
-	find_most_common(ageGenderRests, numRecs)
+	ageGenderIndices = find_most_common(ageGenderRests, numRecs)
+
+	ageGenderRecs = []
+	for index in ageGenderIndices:
+		ageGenderRecs = ageGenderRecs + cur.execute("SELECT * FROM Restaurants WHERE RestaurantId = ?", index)
 
 	'''
 	Incorporate friend data
@@ -96,10 +100,14 @@ def compute_personal_recs(username, numRecs, con, cur):
 	for user in friendUsers:
 		friendRests = friendRests + cur.execute("SELECT RestaurantId FROM Favorites WHERE UserId = ?", user)
 
-	find_most_common(friendRests, numRecs)
+	friendIndices = find_most_common(friendRests, numRecs)
+
+	friendRecs = []
+	for index in friendIndices:
+		friendRecs = friendRecs + cur.execute("SELECT * FROM Restaurants WHERE RestaurantId = ?", index)
 
 	# Return all recommendations
-	return [minRests,ageGenderRests,friendRests]
+	return [minRests,ageGenderRecs,friendRecs]
 
 
 def dist(rest1, rest2, rest1Labels, rest2Labels):
@@ -153,3 +161,36 @@ def empty(dists):
 Find the numRecs most common values in the list
 '''
 def find_most_common(rests, numRecs):
+	rest_to_amount = []
+	rest_to_amount.add([])
+	rest_to_amount.add([])
+	amount_to_rest = {}
+
+	for rest in rests:
+		if rest in rest_to_amount:
+			rest_to_amount[rest] += 1
+			amount_to_rest[rest_to_amount[rest] - 1].remove(rest)
+			if rest_to_amount[rest] in amount_to_rest:
+				amount_to_rest[rest_to_amount[rest]].add(rest)
+			else:
+				amount_to_rest[rest_to_amount[rest]] = [rest]
+		else:
+			amount_to_rest[1].add(rest)
+			rest_to_amount[rest] = 1
+
+	numRecd = numRecs
+	out = []
+	for i in range(len(rest_to_amount)):
+		curr = rest_to_amount[len(rest_to_amount) - 1 - i]
+		for c in curr:
+			if numRecd > 0:
+				out.add(c)
+				numRecd -= 1
+			else:
+				break
+		if numRecd == 0:
+			break;
+
+	return out
+
+
