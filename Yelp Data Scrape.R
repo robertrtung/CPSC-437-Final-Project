@@ -17,9 +17,9 @@ yelp_scrape <- function(term, location, limit=40, offset = 0) {
   extractResults = content(results)
   resultsList=jsonlite::fromJSON(toJSON(extractResults))
   temp <- data.frame(resultsList)
-  output <- data.frame(ID=NA, Name=unlist(temp[, 11]), Rating=unlist(temp[, 7]), 
-                       Price=NA, Latitude=temp[, 23][[7]][1], Longitude=temp[, 23][[7]][2])
-  ids <- unlist(temp[, 21])
+  output <- data.frame(ID=NA, Name=unlist(temp$businesses.name), Rating=unlist(temp$businesses.rating), 
+                       Price=NA, Latitude=temp$businesses.location[[7]][1], Longitude=temp$businesses.location[[7]][2])
+  ids <- unlist(temp$businesses.id)
   for(i in 1:nrow(output)){
     output$ID[i] <- i
     res <- GET(paste("https://api.yelp.com/v3/businesses/", ids[i], sep=""), add_headers(Authorization=paste("Bearer", v3Token)))
