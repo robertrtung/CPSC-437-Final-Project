@@ -1,5 +1,9 @@
 from bs4 import BeautifulSoup
-import csv, urllib2, urlparse
+import csv, re, urllib2, urlparse
+
+def unicode_to_ascii(string):
+	string = re.sub(u'(\u2018|\u2019)', '\'', string)
+	return string.encode('ascii', 'ignore')
 
 class Restaurant:
 	def __init__(self, id):
@@ -7,13 +11,13 @@ class Restaurant:
 		self.html = urllib2.urlopen(self.url).read()
 		self.soup = BeautifulSoup(self.html, 'lxml')
 
-		self.name = [h1.text for h1 in self.soup.find_all('h1')][0].strip()
+		self.name = unicode_to_ascii([h1.text for h1 in self.soup.find_all('h1')][0].strip())
 		self.price = len([span.text for span in self.soup.find_all('span', {'class' : 'price-range'})][0].strip())
 
 		category_span = self.soup.find('span', {'class' : 'category-str-list'})
 		self.categories = []
 		for category in category_span.find_all('a'):
-			self.categories.append(category.text)
+			self.categories.append(unicode_to_ascii(category.text))
 
 		location_tag = self.soup.find('a', {'class' : 'biz-map-directions'})
 		location_tag = location_tag.find('img')
@@ -30,7 +34,7 @@ class Restaurant:
 		reviews = reviews.find_all('div', {'class' : 'review'})[1:]
 		start = 0
 
-		while reviews:
+		while reviews and start < 100:
 			for review in reviews:
 				rating_tag = review.find('div', {'class' : 'rating-large'})
 				rating = float(rating_tag['title'].split()[0].strip())
@@ -100,7 +104,7 @@ def to_csv():
 
 	nh = NewHaven(pages=1)
 	restaurants = nh.get_restaurants()
-	for restaurant in restaurants:
+	for restaurant in restaurants[1:]:
 		try:
 			r = Restaurant(restaurant)
 			r_data.append([restaurant, 
