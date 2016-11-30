@@ -20,6 +20,7 @@ class Restaurant:
 		location_gurl = location_tag['src']
 		location_gurl_query = urlparse.urlparse(location_gurl).query
 		self.location = urlparse.parse_qs(location_gurl_query)['center']
+		self.rating = None
 		self.reviews = []
 
 	def retr_reviews(self):
@@ -44,6 +45,10 @@ class Restaurant:
 			soup = BeautifulSoup(html, 'lxml')
 			reviews = soup.find_all('ul', {'class' : 'reviews'})[0]
 			reviews = reviews.find_all('div', {'class' : 'review'})[1:]
+
+		if self.reviews:
+			self.rating = sum([x[1] for x in self.reviews]) / len(self.reviews)
+
 		return self.reviews
 
 	def get_name(self):
@@ -59,7 +64,16 @@ class Restaurant:
 		return self.location
 
 	def get_reviews(self):
-		return self.reviews
+		if self.reviews:
+			return self.reviews
+		return self.retr_reviews()
+
+	def get_rating(self):
+		if not self.rating:
+			self.retr_reviews()
+		return self.rating
+
+
 
 r = Restaurant('the-halal-guys-new-haven')
-print r.retr_reviews()
+print r.get_rating()
