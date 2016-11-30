@@ -11,12 +11,12 @@ myapp = oauth_app("YELP", key=consumerKey, secret=consumerSecret)
 sig=sign_oauth1.0(myapp, token=token,token_secret=token_secret)
 
 ########
-yelp_scrape <- function(term, location, limit=10, offset = 0) {
+yelp_scrape <- function(term, location, limit=40, offset = 0) {
   myapp <- oauth_app("YELP", key=consumerKey, secret=consumerSecret)
   sig <- sign_oauth1.0(myapp, token=token, token_secret=token_secret)
   
   yelpurl <- "https://api.yelp.com/v2/search/"
-  results <- GET(yelpurl, sig, query=list(term=term, location=location, limit=limit))
+  results <- GET(yelpurl, sig, query=list(term=term, location=location, limit=limit, offset=offset))
 
   extractResults = content(results)
   resultsList=jsonlite::fromJSON(toJSON(extractResults))
