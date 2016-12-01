@@ -20,6 +20,10 @@ def initdb():
 
 	con.execute('''INSERT INTO Users(Name, Age, Gender)
 					VALUES ('Sean', 50, 'Male');''')
+	con.execute('''INSERT INTO Users(Name, Age, Gender)
+					VALUES ('James', 50, 'Male');''')
+	con.execute('''INSERT INTO Users(Name, Age, Gender)
+					VALUES ('Kristina', 49, 'Female');''')
 	con.commit()
 
 	users = con.execute('''SELECT * FROM Users''')
@@ -49,6 +53,10 @@ def initdb():
 					VALUES ('Not Shake Shack 4', 1, 2.345, 6.789, 1);''')
 	con.execute('''INSERT INTO Restaurants(Name, Price, Lat, Lng, Rating)
 					VALUES ('Not Shake Shack 5 DONT RECOMMEND', 1, 10.345, 6.789, 1);''')
+	con.execute('''INSERT INTO Restaurants(Name, Price, Lat, Lng, Rating)
+					VALUES ('James Fav', 1, 2.345, 6.789, 1);''')
+	con.execute('''INSERT INTO Restaurants(Name, Price, Lat, Lng, Rating)
+					VALUES ('Kristina Fav', 1, 2.345, 6.789, 1);''')
 	con.commit()
 
 	rests = con.execute('''SELECT * FROM Restaurants''')
@@ -63,6 +71,10 @@ def initdb():
 
 	con.execute('''INSERT INTO Favorites(UserId, RestaurantId)
 					VALUES (1, 1);''')
+	con.execute('''INSERT INTO Favorites(UserId, RestaurantId)
+					VALUES (2, 8);''')
+	con.execute('''INSERT INTO Favorites(UserId, RestaurantId)
+					VALUES (3, 9);''')
 	con.commit()
 
 	favorites = con.execute('''SELECT * FROM Favorites''')
@@ -88,6 +100,20 @@ def initdb():
 	labels = con.execute('''SELECT * FROM labels''')
 	for label in labels:
 		print('RestaurantId: {}, Label: {}').format(label[0], label[1])
+
+	con.execute('''CREATE TABLE Friends
+		(UserId1		INTEGER 	NOT NULL,
+			UserId2           	INTEGER 	NOT NULL,
+			PRIMARY KEY(UserId1, UserId2));''')
+	print "Friends table created successfully";
+
+	con.execute('''INSERT INTO Friends(UserId1, UserId2)
+					VALUES (1, 2);''')
+	con.commit()
+
+	friends = con.execute('''SELECT * FROM Friends''')
+	for friend in friends:
+		print('UserId1: {}, UserId2: {}').format(friend[0], friend[1])
 
 if __name__ == "__main__":
 	main()
