@@ -150,11 +150,12 @@ def add_favorite(userid, con, cur, rest_name):
 	print(rest_name + " favorited!")
 
 def add_friend(userid, con, cur, friend):
-	# rows = cur.execute("SELECT * FROM Users WHERE UserId=?", friend)
-	# if (len(rows) == 0):
-	# 	print("Uh oh, we've never heard of " + rest_name)
-	# 	return
-	# cur.execute("INSERT INTO Friends(UserId1, UserId2) VALUES (?, ?)", username, friend)
+	cur.execute("SELECT UserId FROM Users WHERE Name=?", [friend])
+	new_friend = cur.fetchall()
+	if (len(new_friend) == 0):
+		print("Uh oh, we've never heard of " + rest_name)
+		return
+	cur.execute("INSERT INTO Friends(UserId1, UserId2) VALUES (?, ?)", [userid, new_friend[0][0]])
 	print(friend + " added as friend!")
 
 def get_friends(userid, con, cur):
