@@ -3,7 +3,6 @@ import sys
 import computations
 import config
 
-UserId = ''
 # con = ''
 # cur = ''
 
@@ -30,12 +29,13 @@ def sign_in(cur):
 			exit()
 		print('Signing in as ' + username)
 
-		cur.execute('SELECT UserId FROM Users WHERE Name=?', [username])
+		cur.execute('SELECT * FROM Users WHERE Name=?', [username])
 		me = cur.fetchall()
 		if (len(me) == 0):
 			print('User does not exist')
 			return -1
-		UserId = me[0][0]
+		return me[0]
+
 		print('UserId: {}').format(UserId)
 
 def finished():
@@ -49,6 +49,14 @@ def main():
 	result = sign_in(cur)
 	while (result == -1):
 		result = sign_in(cur)
+
+	for attr in result:
+		print(attr)
+
+	UserId = result[0]
+	Name = result[1]
+	Age = result[2]
+	Gender = result[3]
 
 	# computations.compute_recs(username)
 	actions()
