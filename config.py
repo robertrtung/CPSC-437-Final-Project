@@ -3,9 +3,9 @@ import sys
 import os
 
 def main():
-	if (os.path.isfile('restaurantPredictions.db') and len(sys.argv) > 1):
+	if (os.path.isfile('db/restaurantPredictions.db') and len(sys.argv) > 1):
 		print('Database reset with fake data')
-		os.remove('restaurantPredictions.db')
+		os.remove('db/restaurantPredictions.db')
 		con = initdb()
 		init_fake(con)
 	else: 
@@ -68,7 +68,7 @@ def init_fake(con):
 
 
 def initdb():
-	con = sqlite3.connect('restaurantPredictions.db')
+	con = sqlite3.connect('db/restaurantPredictions.db')
 	
 	con.execute('''CREATE TABLE Favorites
 		(UserId		INTEGER 	NOT NULL,

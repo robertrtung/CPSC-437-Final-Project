@@ -4,7 +4,7 @@ import computations
 import config
 
 def initdb():
-	con = sqlite3.connect('restaurantPredictions.db')
+	con = sqlite3.connect('db/restaurantPredictions.db')
 	cur = con.cursor()
 	return con
 
