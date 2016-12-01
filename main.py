@@ -1,8 +1,11 @@
 import sqlite3
 import sys
 import computations
+import config
 
 username = ''
+con = ''
+cur = ''
 
 def initdb():
 	con = sqlite3.connect('restaurantPredictions.db')
@@ -10,6 +13,7 @@ def initdb():
 
 def main():
 	initdb()
+
 	'''
 	Grab the username from input
 	'''
@@ -69,12 +73,14 @@ def actions():
 
 			elif (action == 'F'):
 				print('Eat up!')
+				con.close()
 				exit()
 
 			else:
 				print('Please choose A, B, C, D, E, or F.')
 		except EOFError:
 			print('Eat up!')
+			conn.close()
 			exit()
 
 def get_recommendations(username):
