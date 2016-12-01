@@ -131,13 +131,13 @@ def actions(userid, name, age, gender, con, cur):
 			elif (action == 'B'):
 				print('Here are you favorites:')
 				'''Query DB for favorites based on username'''
-				favorites = get_favorites(username)
+				favorites = get_favorites(userid, con, cur)
 				output(favorites)
 
 			elif (action == 'C'):
 				print('Here are you friends:')
 				'''Query DB for friends based on username'''
-				friends = get_friends(username)
+				friends = get_friends(userid, con, cur)
 				i = 1
 				for friend in friends:
 					print('{}. ' + friend).format(i)
@@ -151,7 +151,7 @@ def actions(userid, name, age, gender, con, cur):
 					finished()
 
 				'''Add restaurant as favorite for username'''
-				add_favorite(username, rest_name)
+				add_favorite(userid, rest_name)
 
 			elif (action == 'E'):
 				print('Who would you like to friend?')
@@ -160,7 +160,7 @@ def actions(userid, name, age, gender, con, cur):
 					friend_name = raw_input()
 				except EOFError:
 					finished()
-				add_friend(username, friend_name)
+				add_friend(userid, friend_name)
 
 			elif (action == 'F'):
 				finished()
@@ -171,37 +171,14 @@ def actions(userid, name, age, gender, con, cur):
 			finished()
 
 def get_recommendations(userid, con, cur):
-	recs = list()
-	'''TODO get recommends based on favorites based on username'''
-	# for restId in recommends
-		# add = dict()
-		# rest = cur.execute("SELECT Name, Price, Rating FROM Restaurants WHERE RestaurantId=?", restId)
-		# add['name'] = rest[0]
-		# add['price'] = int(rest[1])
-		# add['rating'] = float(rest[2])
-		# recs.append(add)
-	''' hardcoded sample '''
-	# restaurant = {'name': 'Halal Guys', 'price': 2, 'rating': 4.5}
-	# recs.append(restaurant)
-	# restaurant = {'name': 'Chipotle', 'price': 1, 'rating': 3}
-	# recs.append(restaurant)
+	'''Get recommendations based on favorites based on username'''
 	recs = computations.compute_personal_recs(userid, 5, con, cur, True, False, False)[0]
 	return recs
 
-def get_favorites(username):
-	favorites = list()
-	# add = dict()
-	# favs = cur.execute("SELECT Name, Price, Rating FROM Restaurants, Favorites WHERE Restaurants.RestaurantId=Favorites.RestaurantId and UserId=?", username)
-	# for fav in favs:
-		# add['name'] = fav[0]
-		# add['price'] = int(fav[1])
-		# add['rating'] = float(fav[2])
-		# favorites.append(add)
-	restaurant = {'name': 'Halal Guys', 'price': 2, 'rating': 4.5}
-	favorites.append(restaurant)
-	restaurant = {'name': 'Chipotle', 'price': 1, 'rating': 3}
-	favorites.append(restaurant)
-	return favorites;
+def get_favorites(userid, con, cur):
+	cur.execute("SELECT * FROM Restaurants, Favorites WHERE Restaurants.RestaurantId=Favorites.RestaurantId and UserId=?", [userid])
+	fav = cur.fetchall()
+	return fav;
 
 def add_favorite(username, rest_name):
 	# rows = cur.execute("SELECT RestaurantId FROM Restaurants WHERE Name=?", rest_name)
@@ -219,14 +196,11 @@ def add_friend(username, friend):
 	# cur.execute("INSERT INTO Friends(UserId1, UserId2) VALUES (?, ?)", username, friend)
 	print(friend + " added as friend!")
 
-def get_friends(username):
+def get_friends(userid, con, cur):
 	friends = list()
-	# others = cur.execute("SELECT UserId2 FROM Friends WHERE UserId1=?", username)
-	# for people in others:
-		# friends.append(people[0])
-	friends.append('James')
-	friends.append('Sean')
-	friends.append('Robert')
+	others = cur.execute("SELECT Name FROM Users, Friends WHERE UserId1=? and UserId2=UserId", [userid])
+	for people in others:
+		friends.append(people[0])
 	return friends
 
 if __name__ == "__main__":

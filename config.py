@@ -116,6 +116,8 @@ def initdb():
 
 	con.execute('''INSERT INTO Friends(UserId1, UserId2)
 					VALUES (1, 2);''')
+	con.execute('''INSERT INTO Friends(UserId1, UserId2)
+					VALUES (2, 3);''')
 	con.commit()
 
 	friends = con.execute('''SELECT * FROM Friends''')
