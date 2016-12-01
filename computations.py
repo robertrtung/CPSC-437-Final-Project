@@ -61,7 +61,8 @@ def compute_personal_recs(username, numRecs, con, cur):
 		for fav in favoriteSet:
 			labelsFav = cur.execute("SELECT * FROM labels WHERE RestaurantId = %i", (fav["RestaurantId"]))
 			currSum += dist(notFav,fav,labelsNotFav,labelsFav)
-		if (e = empty(minDists)) != -1:
+		e = empty(minDists)
+		if e != -1:
 			minDists[e] = currSum
 			minRest[e] = notFav
 			min_sort(minDists,minRests,e)
