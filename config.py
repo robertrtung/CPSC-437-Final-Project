@@ -3,14 +3,16 @@ import sys
 import os
 
 def main():
-	if os.path.isfile('restaurantPredictions.db'):
-		print('Database already exists')
-		exit()
-	initdb()
+	if (os.path.isfile('restaurantPredictions.db') and len(sys.argv) > 1):
+		print('Database reset with fake data')
+		os.remove('restaurantPredictions.db')
+		con = initdb()
+		init_fake(con)
+	else: 
+		initdb()
 
-def initdb():
-	con = sqlite3.connect('restaurantPredictions.db')
-	
+def init_fake(con):
+
 	con.execute('''CREATE TABLE Users
 		(UserId 		INTEGER PRIMARY KEY     AUTOINCREMENT,
 			Name           TEXT    NOT NULL,
@@ -25,6 +27,7 @@ def initdb():
 	users = con.execute('''SELECT * FROM Users''')
 	for user in users:
 		print('UserId: {}, Name: {}, Age: {}, Gender: {}').format(user[0], user[1], user[2], user[3])
+
 
 	con.execute('''CREATE TABLE Restaurants
 		(RestaurantId		INTEGER 	PRIMARY KEY     AUTOINCREMENT,
@@ -47,6 +50,10 @@ def initdb():
 	for rest in rests:
 		print('RestaurantId: {}, Name: {}, Price: {}, Lat: {}, Lng: {}, Rating: {}').format(rest[0], rest[1], rest[2], rest[3], rest[4], rest[5])
 
+
+def initdb():
+	con = sqlite3.connect('restaurantPredictions.db')
+	
 	con.execute('''CREATE TABLE Favorites
 		(UserId		INTEGER 	NOT NULL,
 			RestaurantId           	INTEGER 	NOT NULL,
@@ -60,6 +67,8 @@ def initdb():
 	favorites = con.execute('''SELECT * FROM Favorites''')
 	for favorite in favorites:
 		print('UserId: {}, RestaurantId: {}').format(favorite[0], favorite[1])
+
+	return con
 
 if __name__ == "__main__":
 	main()
