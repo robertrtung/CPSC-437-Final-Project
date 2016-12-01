@@ -11,5 +11,7 @@ For user information, we decided to simulate user data. This was for a variety o
 We have five tables in our database: Users (UserId, Name, Age, Gender), Restaurants (RestaurantId, Name, Price, Latitude, Longitude, Rating), Favorites (UserId, RestaurantId), Friends (UserId, UserId2), and Labels (RestaurantId, Label). 
 
 Two aspects of our database design are particularly notable. The first is the Favorites table, which acts as a relationship set between Users and Restaurants. The second is the Labels table, which is essentially a multivalued attribute of Restaurants. 
-Computation
-Creating the applicationUsage:FeaturesExample of user experienceIdeas for further improvement
+Computation 
+
+With all this data in our hands, we have the power to make insightful recommendations by applying basic machine learning. Our recommendation algorithm essentially works in two steps: 1) run principal component analysis (PCA) on the data to determine what combination of restaurant attributes best explains user preferences 2) calculate distances and make recommendations based on the “nearest” restaurants.
+Creating the applicationUsage:FeaturesOur application prototype offers several features which differentiate it from the native Yelp application. First, Ideas for further improvement
