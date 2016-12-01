@@ -3,14 +3,14 @@ import sys
 import os
 
 def main():
-	if len(sys.argv) > 1:
-		print('Database reset with fake data')
-		if os.path.isfile('db/restaurantPredictions.db'):
-			os.remove('db/restaurantPredictions.db')
-		con = initdb()
-		init_fake(con)
-	else: 
-		initdb()
+	# if len(sys.argv) > 1:
+	# 	print('Database reset with fake data')
+	# 	if os.path.isfile('db/restaurantPredictions.db'):
+	# 		os.remove('db/restaurantPredictions.db')
+	# 	con = initdb()
+	# 	init_fake(con)
+	# else: 
+	initdb()
 
 def init_fake(con):
 
@@ -93,7 +93,7 @@ def init_fake(con):
 def initdb():
 	con = sqlite3.connect('db/restaurantPredictions.db')
 
-	con.execute('DROP TABLE IF EXISTS Users')
+	# con.execute('DROP TABLE IF EXISTS Users')
 	con.execute('''CREATE TABLE Users
 		(UserId 		INTEGER PRIMARY KEY     AUTOINCREMENT,
 			Name           TEXT    NOT NULL,
@@ -113,7 +113,7 @@ def initdb():
 	for user in users:
 		print('UserId: {}, Name: {}, Age: {}, Gender: {}').format(user[0], user[1], user[2], user[3])
 	
-	con.execute('DROP TABLE IF EXISTS Favorites')
+	# con.execute('DROP TABLE IF EXISTS Favorites')
 	con.execute('''CREATE TABLE Favorites
 		(UserId		INTEGER 	NOT NULL,
 			RestaurantId           	INTEGER 	NOT NULL,
@@ -132,7 +132,7 @@ def initdb():
 	for favorite in favorites:
 		print('UserId: {}, RestaurantId: {}').format(favorite[0], favorite[1])
 
-	con.execute('DROP TABLE IF EXISTS Friends')	
+	# con.execute('DROP TABLE IF EXISTS Friends')	
 	con.execute('''CREATE TABLE Friends
 		(UserId1		INTEGER 	NOT NULL,
 			UserId2           	INTEGER 	NOT NULL,
