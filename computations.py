@@ -9,14 +9,16 @@ def compute_personal_recs(userid, numRecs, con, cur, personal, ageGender=True, f
 
 	# Create set of id's of favorite restaurants for user
 	favoriteIdsSet = set()
-	favorites = cur.execute("SELECT RestaurantId FROM  favorites WHERE UserId = ?", userid)
+	cur.execute("SELECT RestaurantId FROM  favorites WHERE UserId = ?", [userid])
+	favorites = cur.fetchall()
 	for favorite in favorites:
 		favoriteIdsSet.add(favorite)
 
 	'''
 	Using the favorites, perform computations
 	'''
-	restaurants = cur.execute("SELECT * FROM restaurants")
+	cur.execute("SELECT * FROM restaurants")
+	restaurants = cur.fetchall()
 
 	# Create set of favorite and not favorite restaurants
 	favoriteSet = set()
@@ -27,7 +29,11 @@ def compute_personal_recs(userid, numRecs, con, cur, personal, ageGender=True, f
 			favoriteSet.add(restaurant)
 		else:
 			if ((specPrice and restaurant["specPrice"] == specPrice) or (not specPrice)) and ((specRating and restaurant["specRating"] == specRating) or (not specRating)):
-				if not specLabel or len(cur.execute("SELECT * FROM labels WHERE RestaurantId = ? AND Label = ?", restaurant["RestaurantId"], specLabel)) != 0:
+				if not specLabel:
+					notFavoriteSet.add(restaurant)
+				cur.execute("SELECT * FROM labels WHERE RestaurantId = ? AND Label = ?", [restaurant["RestaurantId"], specLabel])
+				labelFound = cur.fetchall()
+				if len(labelFound) != 0:
 					notFavoriteSet.add(restaurant)
 
 	# Find numRecs restaurant with minimum distance
@@ -40,9 +46,11 @@ def compute_personal_recs(userid, numRecs, con, cur, personal, ageGender=True, f
 			minRests.add(None)
 
 		for notFav in notFavoriteSet:
-			labelsNotFav = cur.execute("SELECT * FROM labels WHERE RestaurantId = %i", (notFav["RestaurantId"]))
+			cur.execute("SELECT * FROM labels WHERE RestaurantId = ?", [notFav["RestaurantId"]])
+			labelsNotFav = cur.fetchall()
 			for fav in favoriteSet:
-				labelsFav = cur.execute("SELECT * FROM labels WHERE RestaurantId = %i", (fav["RestaurantId"]))
+				cur.execute("SELECT * FROM labels WHERE RestaurantId = ?", [fav["RestaurantId"]])
+				labelsFav = cur.fetchall()
 				currSum += dist(notFav,fav,labelsNotFav,labelsFav)
 			e = empty(minDists)
 			if e != -1:
@@ -61,7 +69,8 @@ def compute_personal_recs(userid, numRecs, con, cur, personal, ageGender=True, f
 	ageGenderRecs = []
 
 	if ageGender:
-		currentUser = cur.execute("SELECT * FROM Users WHERE UserId = ?", userid)
+		cur.execute("SELECT * FROM Users WHERE UserId = ?", [userid])
+		currentUser = cur.fetchall()
 		ageGenderRecs = compute_age_gender(currentUser["Age"], currentUser["Gender"], cur)
 
 	'''
@@ -71,28 +80,34 @@ def compute_personal_recs(userid, numRecs, con, cur, personal, ageGender=True, f
 	friendRecs = []
 
 	if friends:
-		friendUsers = cur.execute("SELECT UserId2 FROM Friends WHERE UserId1 = ?", userid)
+		cur.execute("SELECT UserId2 FROM Friends WHERE UserId1 = ?", [userid])
+		friendUsers = cur.fetchall()
 
 		for user in friendUsers:
-			friendRests = friendRests + cur.execute("SELECT RestaurantId FROM Favorites WHERE UserId = ?", user)
+			cur.execute("SELECT RestaurantId FROM Favorites WHERE UserId = ?", [user])
+			friendRests = friendRests + cur.fetchall()
 
 		friendIndices = find_most_common(friendRests, numRecs)
 		for index in friendIndices:
-			friendRecs = friendRecs + cur.execute("SELECT * FROM Restaurants WHERE RestaurantId = ?", index)
+			cur.execute("SELECT * FROM Restaurants WHERE RestaurantId = ?", [index])
+			friendRecs = friendRecs + cur.fetchall()
 
 	# Return all recommendations
 	return [minRests,ageGenderRecs,friendRecs]
 
 def compute_age_gender(age, gender, numRecs, cur):
 	ageGenderRests = []
-	ageGenderUsers = cur.execute("SELECT UserId FROM Users WHERE Age = ? AND Gender = ?", age, gender)
+	cur.execute("SELECT UserId FROM Users WHERE Age = ? AND Gender = ?", [age, gender])
+	ageGenderUsers = cur.fetchall()
 
 	for user in ageGenderUsers:
-		ageGenderRests = ageGenderRests + cur.execute("SELECT RestaurantId FROM Favorites WHERE UserId", user)
+		cur.execute("SELECT RestaurantId FROM Favorites WHERE UserId", [user])
+		ageGenderRests = ageGenderRests + cur.fetchall()
 
 	ageGenderIndices = find_most_common(ageGenderRests, numRecs)
 	for index in ageGenderIndices:
-		ageGenderRecs = ageGenderRecs + cur.execute("SELECT * FROM Restaurants WHERE RestaurantId = ?", index)
+		cur.execute("SELECT * FROM Restaurants WHERE RestaurantId = ?", [index])
+		ageGenderRecs = ageGenderRecs + cur.fetchall()
 
 	return ageGenderRecs
 
