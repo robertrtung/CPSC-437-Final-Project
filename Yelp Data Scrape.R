@@ -1,3 +1,9 @@
+consumerKey = "JmaomcAzFt7hKPNfS98NvQ"
+consumerSecret = "4-ZNGbGD18oKjUSnL2n9Bth-QJo"
+token = "hpbsaWY87YYNRYpr2gSH6eVyo9mhH_ZJ"
+token_secret = "TZfgmUZq3gIx5vFmEwyaMrf_7yU"
+
+v3Token = "ZGCZLBa1pDe2UEMQ3JOJeGmLAetgCetLV0kb5DnlwXvXhupuWQgRqRKkfJ8VNh-R2ce1UeOT44vGm_IFBxxa4u6dA2JdLr3845yHSR4Pf5dZwtyIMWXk-Tg_5h0_WHYx"
 
 library(httr)
 library(httpuv)
@@ -18,7 +24,7 @@ yelp_scrape <- function(term, location, limit=40, offset = 0) {
   resultsList=jsonlite::fromJSON(toJSON(extractResults))
   temp <- data.frame(resultsList)
   output <- data.frame(ID=NA, Name=unlist(temp$businesses.name), Rating=unlist(temp$businesses.rating), 
-                       Price=NA, Latitude=temp$businesses.location[[7]][1], Longitude=temp$businesses.location[[7]][2])
+                       Price=NA, Latitude=temp$businesses.location$coordinate$latitude, Longitude=temp$businesses.location$coordinate$longitude)
   ids <- unlist(temp$businesses.id)
   for(i in 1:nrow(output)){
     output$ID[i] <- i+offset
