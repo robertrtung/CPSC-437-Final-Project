@@ -120,13 +120,13 @@ def to_csv():
 		except:
 			pass
 
-	with open('restaurants.csv', 'w') as f:
+	with open('csv/restaurants.csv', 'w') as f:
 		writer = csv.writer(f)
 		writer.writerows(r_header + r_data)
-	with open('labels.csv', 'w') as f:
+	with open('csv/labels.csv', 'w') as f:
 		writer = csv.writer(f)
 		writer.writerows(l_header + l_data)
-	with open('reviews.csv', 'w') as f:
+	with open('csv/reviews.csv', 'w') as f:
 		writer = csv.writer(f)
 		writer.writerows(rev_header + rev_data)
 
