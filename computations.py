@@ -70,8 +70,8 @@ def compute_personal_recs(userid, numRecs, con, cur, personal=True, ageGender=Tr
 
 	if ageGender:
 		cur.execute("SELECT * FROM Users WHERE UserId = ?", [userid])
-		currentUser = cur.fetchall()
-		ageGenderRecs = compute_age_gender(currentUser[2], currentUser[3], cur)
+		currentUser = cur.fetchall()[0]
+		ageGenderRecs = compute_age_gender(userid, currentUser[2], currentUser[3], numRecs, cur)
 
 	'''
 	Incorporate friend data
@@ -84,31 +84,31 @@ def compute_personal_recs(userid, numRecs, con, cur, personal=True, ageGender=Tr
 		friendUsers = cur.fetchall()
 
 		for user in friendUsers:
-			cur.execute("SELECT RestaurantId FROM Favorites WHERE UserId = ?", [user])
+			cur.execute("SELECT RestaurantId FROM Favorites WHERE UserId = ?", [user[0]])
 			friendRests = friendRests + cur.fetchall()
 
 		friendIndices = find_most_common(friendRests, numRecs)
 		for index in friendIndices:
-			cur.execute("SELECT * FROM Restaurants WHERE RestaurantId = ?", [index])
+			cur.execute("SELECT * FROM Restaurants WHERE RestaurantId = ?", [index[0]])
 			friendRecs = friendRecs + cur.fetchall()
 
 	# Return all recommendations
-	print(minDists)
 	minRests.reverse()
 	return [minRests,ageGenderRecs,friendRecs]
 
-def compute_age_gender(age, gender, numRecs, cur):
+def compute_age_gender(userid, age, gender, numRecs, cur):
+	ageGenderRecs = []
 	ageGenderRests = []
-	cur.execute("SELECT UserId FROM Users WHERE Age = ? AND Gender = ?", [age, gender])
+	cur.execute("SELECT UserId FROM Users WHERE Age = ? AND Gender = ? AND NOT UserId = ?", [age, gender, userid])
 	ageGenderUsers = cur.fetchall()
 
 	for user in ageGenderUsers:
-		cur.execute("SELECT RestaurantId FROM Favorites WHERE UserId", [user])
+		cur.execute("SELECT RestaurantId FROM Favorites WHERE UserId = ?", [user[0]])
 		ageGenderRests = ageGenderRests + cur.fetchall()
 
 	ageGenderIndices = find_most_common(ageGenderRests, numRecs)
 	for index in ageGenderIndices:
-		cur.execute("SELECT * FROM Restaurants WHERE RestaurantId = ?", [index])
+		cur.execute("SELECT * FROM Restaurants WHERE RestaurantId = ?", [index[0]])
 		ageGenderRecs = ageGenderRecs + cur.fetchall()
 
 	return ageGenderRecs
@@ -164,10 +164,10 @@ def empty(dists):
 Find the numRecs most common values in the list
 '''
 def find_most_common(rests, numRecs):
-	rest_to_amount = []
-	rest_to_amount.append([])
-	rest_to_amount.append([])
-	amount_to_rest = {}
+	amount_to_rest = []
+	amount_to_rest.append([])
+	amount_to_rest.append([])
+	rest_to_amount = {}
 
 	for rest in rests:
 		if rest in rest_to_amount:
@@ -183,8 +183,8 @@ def find_most_common(rests, numRecs):
 
 	numRecd = numRecs
 	out = []
-	for i in range(len(rest_to_amount)):
-		curr = rest_to_amount[len(rest_to_amount) - 1 - i]
+	for i in range(len(amount_to_rest)):
+		curr = amount_to_rest[len(amount_to_rest) - 1 - i]
 		for c in curr:
 			if numRecd > 0:
 				out.append(c)
