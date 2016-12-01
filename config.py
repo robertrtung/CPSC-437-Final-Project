@@ -16,7 +16,7 @@ def initdb():
 			Name           TEXT    NOT NULL,
 			Age            INT     NOT NULL,
 			Gender        CHAR(50));''')
-	print "Table created successfully";
+	print "Users table created successfully";
 
 	con.execute('''INSERT INTO Users(Name, Age, Gender)
 					VALUES ('Sean', 50, 'Male');''')
@@ -33,15 +33,32 @@ def initdb():
 			Lat        		NUMERIC		NOT NULL,
 			Lng 			NUMERIC		NOT NULL,
 			Rating			NUMERIC		NOT NULL);''')
-	print "Table created successfully";
+	print "Restaurants table created successfully";
 
 	con.execute('''INSERT INTO Restaurants(Name, Price, Lat, Lng, Rating)
 					VALUES ('Shake Shack', 3, 1.234, 5.678, 4.5);''')
+	con.execute('''INSERT INTO Restaurants(Name, Price, Lat, Lng, Rating)
+					VALUES ('Shake Shack 2', 3, 1.234, 5.678, 4.5);''')
+	con.execute('''INSERT INTO Restaurants(Name, Price, Lat, Lng, Rating)
+					VALUES ('Not Shake Shack', 1, 2.345, 6.789, 1);''')
 	con.commit()
 
 	rests = con.execute('''SELECT * FROM Restaurants''')
 	for rest in rests:
 		print('RestaurantId: {}, Name: {}, Price: {}, Lat: {}, Lng: {}, Rating: {}').format(rest[0], rest[1], rest[2], rest[3], rest[4], rest[5])
+
+	con.execute('''CREATE TABLE Favorites
+		(UserId		INTEGER 	PRIMARY KEY     NOT NULL,
+			RestaurantId           	INTEGER 	PRIMARY KEY  		 NOT NULL);''')
+	print "Favorites table created successfully";
+
+	con.execute('''INSERT INTO Favorites(UserId, RestaurantId)
+					VALUES (1, 1);''')
+	con.commit()
+
+	favorites = con.execute('''SELECT * FROM Favorites''')
+	for favorite in favorites:
+		print('UserId: {}, RestaurantId: {}').format(favorite[0], favorite[1])
 
 if __name__ == "__main__":
 	main()
