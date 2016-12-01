@@ -3,27 +3,53 @@ import sys
 import computations
 import config
 
-username = ''
-con = ''
-cur = ''
+UserId = ''
+# con = ''
+# cur = ''
 
 def initdb():
 	con = sqlite3.connect('restaurantPredictions.db')
 	cur = con.cursor()
+	return con
 
-def main():
-	initdb()
-
-	'''
-	Grab the username from input
-	'''
-	print('What is your name?')
+def sign_in(cur):
+	print('Welcome! (A) Sign In (B) Register')
 	try:
-		username = raw_input()
+		next = raw_input()
 	except EOFError:
 		exit()
 
-	print('Signing in as ' + username)	
+	if (next == 'A'):
+		'''
+		Grab the username from input
+		'''
+		print('What is your name?')
+		try:
+			username = raw_input()
+		except EOFError:
+			exit()
+		print('Signing in as ' + username)
+
+		cur.execute('SELECT UserId FROM Users WHERE Name=?', [username])
+		me = cur.fetchall()
+		if (len(me) == 0):
+			print('User does not exist')
+			return -1
+		UserId = me[0][0]
+		print('UserId: {}').format(UserId)
+
+def finished():
+	print('Eat up!')
+	exit()
+
+def main():
+	con = initdb()
+	cur = con.cursor()
+
+	result = sign_in(cur)
+	while (result == -1):
+		result = sign_in(cur)
+
 	# computations.compute_recs(username)
 	actions()
 
@@ -61,27 +87,30 @@ def actions():
 
 			elif (action == 'D'):
 				print('Which restaurant would you like to favorite?')
-				rest_name = raw_input()
+				try:
+					rest_name = raw_input()
+				except EOFError:
+					finished()
+
 				'''Add restaurant as favorite for username'''
 				add_favorite(username, rest_name)
 
 			elif (action == 'E'):
 				print('Who would you like to friend?')
 				'''Add friend as friend of user'''
-				friend_name = raw_input()
+				try:
+					friend_name = raw_input()
+				except EOFError:
+					finished()
 				add_friend(username, friend_name)
 
 			elif (action == 'F'):
-				print('Eat up!')
-				con.close()
-				exit()
+				finished()
 
 			else:
 				print('Please choose A, B, C, D, E, or F.')
 		except EOFError:
-			print('Eat up!')
-			conn.close()
-			exit()
+			finished()
 
 def get_recommendations(username):
 	recs = list()
