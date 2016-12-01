@@ -48,8 +48,8 @@ def initdb():
 		print('RestaurantId: {}, Name: {}, Price: {}, Lat: {}, Lng: {}, Rating: {}').format(rest[0], rest[1], rest[2], rest[3], rest[4], rest[5])
 
 	con.execute('''CREATE TABLE Favorites
-		(UserId		INTEGER 	PRIMARY KEY     NOT NULL,
-			RestaurantId           	INTEGER 	PRIMARY KEY  		 NOT NULL,
+		(UserId		INTEGER 	NOT NULL,
+			RestaurantId           	INTEGER 	NOT NULL,
 			PRIMARY KEY(UserId, RestaurantId));''')
 	print "Favorites table created successfully";
 
