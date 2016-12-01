@@ -10,7 +10,6 @@ def compute_personal_recs(username, numRecs, con, cur, personal, ageGender, frie
 	# Create set of id's of favorite restaurants for user
 	favoriteIdsSet = set()
 	favorites = cur.execute("SELECT RestaurantId FROM  favorites WHERE UserId = ?", username)
-	con.commit()
 	for favorite in favorites:
 		favoriteIdsSet.add(favorite)
 
@@ -18,7 +17,6 @@ def compute_personal_recs(username, numRecs, con, cur, personal, ageGender, frie
 	Using the favorites, perform computations
 	'''
 	restaurants = cur.execute("SELECT * FROM restaurants")
-	con.commit()
 
 	# Create set of favorite and not favorite restaurants
 	favoriteSet = set()
@@ -64,7 +62,6 @@ def compute_personal_recs(username, numRecs, con, cur, personal, ageGender, frie
 	if ageGender:
 		currentUser = cur.execute("SELECT * FROM Users WHERE UserId = ?", username)
 		ageGenderUsers = cur.execute("SELECT UserId FROM Users WHERE Age = ? AND Gender = ?", currentUser["Age"], currentUser["Gender"])
-		con.commit()
 
 		for user in ageGenderUsers:
 			ageGenderRests = ageGenderRests + cur.execute("SELECT RestaurantId FROM Favorites WHERE UserId", user)
@@ -81,7 +78,6 @@ def compute_personal_recs(username, numRecs, con, cur, personal, ageGender, frie
 
 	if friends:
 		friendUsers = cur.execute("SELECT UserId2 FROM Friends WHERE UserId1 = ?", username)
-		con.commit()
 
 		for user in friendUsers:
 			friendRests = friendRests + cur.execute("SELECT RestaurantId FROM Favorites WHERE UserId = ?", user)
