@@ -30,24 +30,6 @@ def compute_personal_recs(username, numRecs, con, cur, personal, ageGender, frie
 		else:
 			notFavoriteSet.add(restaurant)
 
-	# Find restaurant with minimum distance
-	'''
-	# Outdated code kept here in case other code fails
-	minDist = sys.maxint
-	currSum = 0
-	minRest = None
-
-	for notFav in notFavoriteSet:
-		labelsNotFav = cur.execute("SELECT * FROM labels WHERE RestaurantId = %i", (notFav["RestaurantId"]))
-		for fav in favoriteSet:
-			labelsFav = cur.execute("SELECT * FROM labels WHERE RestaurantId = %i", (fav["RestaurantId"]))
-			currSum += dist(notFav,fav,labelsNotFav,labelsFav)
-		if minDist > currSum:
-			minDist = currSum
-			minRest = notFav
-		currSum = 0
-	'''
-
 	# Find numRecs restaurant with minimum distance
 	minDists = []
 	minRests = []
