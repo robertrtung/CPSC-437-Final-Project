@@ -121,7 +121,7 @@ def actions(userid, name, age, gender, con, cur):
 		except EOFError:
 			finished()
 
-def get_recommendations(userid, con, cur):
+def get_recommendations(userid, con, cur, which=0):
 	recs = list()
 	'''TODO get recommends based on favorites based on username'''
 	# for restId in recommends
@@ -136,7 +136,19 @@ def get_recommendations(userid, con, cur):
 	# recs.append(restaurant)
 	# restaurant = {'name': 'Chipotle', 'price': 1, 'rating': 3}
 	# recs.append(restaurant)
-	recs = computations.compute_personal_recs(userid, 5, con, cur, False, True, False)[1]
+	if which == 0:
+		personal = True
+		ageGender = False
+		friends = False
+	elif which == 1:
+		personal = False
+		ageGender = True
+		friends = False
+	elif which == 2:
+		personal = False
+		ageGender = False
+		friends = True
+	recs = computations.compute_personal_recs(userid, 5, con, cur, personal, ageGender, friends)[which]
 	return recs
 
 def get_favorites(username):
