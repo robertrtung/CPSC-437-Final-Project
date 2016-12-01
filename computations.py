@@ -1,7 +1,7 @@
 import sqlite3
 import sys
 
-def compute_personal_recs(userid, numRecs, con, cur, personal, ageGender, friends):
+def compute_personal_recs(userid, numRecs, con, cur, personal, ageGender=True, friends=True, specPrice=None, specRating=None, specLael=None):
 
 	'''
 	With that userid, grab that person's favorites
@@ -26,7 +26,9 @@ def compute_personal_recs(userid, numRecs, con, cur, personal, ageGender, friend
 		if restaurant["RestaurantId"] in favoriteIdsSet:
 			favoriteSet.add(restaurant)
 		else:
-			notFavoriteSet.add(restaurant)
+			if ((specPrice and restaurant["specPrice"] == specPrice) or (not specPrice)) and ((specRating and restaurant["specRating"] == specRating) or (not specRating)):
+				if not specLabel or len(cur.execute("SELECT * FROM labels WHERE RestaurantId = ? AND Label = ?", restaurant["RestaurantId"], specLabel)) != 0:
+					notFavoriteSet.add(restaurant)
 
 	# Find numRecs restaurant with minimum distance
 	minDists = []
