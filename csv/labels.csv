@@ -2,27 +2,25 @@ rid,label
 sandras-next-generation-new-haven,Soul Food
 sandras-next-generation-new-haven,Southern
 sandras-next-generation-new-haven,Chicken Wings
-august-new-haven-3,Wine Bars
-august-new-haven-3,American (New)
-pitaziki-mediterranean-grill-new-haven,Mediterranean
 mecha-noodle-bar-new-haven,Beer Bar
 mecha-noodle-bar-new-haven,Wine Bars
 mecha-noodle-bar-new-haven,Ramen
+august-new-haven-3,Wine Bars
+august-new-haven-3,American (New)
+pitaziki-mediterranean-grill-new-haven,Mediterranean
+house-of-naan-indian-kitchen-and-bar-new-haven,Indian
+house-of-naan-indian-kitchen-and-bar-new-haven,Bars
 da-legna-new-haven,Pizza
 da-legna-new-haven,Italian
 da-legna-new-haven,Bars
 caseus-fromagerie-and-bistro-new-haven,American (New)
 caseus-fromagerie-and-bistro-new-haven,Cheese Shops
-tikkaway-fresh-indian-grill-new-haven-2,Indian
-tikkaway-fresh-indian-grill-new-haven-2,Vegan
-tikkaway-fresh-indian-grill-new-haven-2,Gluten-Free
 frank-pepe-pizzeria-napoletana-new-haven,Pizza
 frank-pepe-pizzeria-napoletana-new-haven,Italian
 crepes-choupette-new-haven-6,Creperies
 junzi-kitchen-new-haven,Chinese
 junzi-kitchen-new-haven,Fast Food
 junzi-kitchen-new-haven,Asian Fusion
-skappo-new-haven,Italian
 the-taste-of-brazil-new-haven,Steakhouses
 the-taste-of-brazil-new-haven,Brazilian
 barracuda-bistro-and-bar-new-haven,American (New)
@@ -31,61 +29,10 @@ barracuda-bistro-and-bar-new-haven,Cocktail Bars
 prime-16-new-haven,American (New)
 prime-16-new-haven,Burgers
 prime-16-new-haven,Pubs
-zinc-new-haven-new-haven-2,American (New)
-barcelona-new-haven-new-haven-3,Wine Bars
-barcelona-new-haven-new-haven-3,Spanish
-barcelona-new-haven-new-haven-3,Tapas Bars
-house-of-naan-indian-kitchen-and-bar-new-haven,Indian
-house-of-naan-indian-kitchen-and-bar-new-haven,Bars
-one-6-three-new-haven-2,Pizza
-one-6-three-new-haven-2,Italian
-one-6-three-new-haven-2,Sandwiches
-ordinary-new-haven,Lounges
-ordinary-new-haven,American (New)
-ordinary-new-haven,Pubs
-soul-de-cuba-cafe-new-haven-2,Cuban
-soul-de-cuba-cafe-new-haven-2,Cafes
-soul-de-cuba-cafe-new-haven-2,Tapas/Small Plates
-elm-city-social-new-haven?search_key=60780,Cocktail Bars
-elm-city-social-new-haven?search_key=60780,American (New)
-jeera-thai-new-haven?search_key=60780,Thai
-rubamba-new-haven?search_key=60780,Latin American
-basil-restaurant-new-haven-2?search_key=60780,Asian Fusion
-basil-restaurant-new-haven-2?search_key=60780,Bubble Tea
-basil-restaurant-new-haven-2?search_key=60780,Thai
-mamouns-falafel-restaurant-new-haven?search_key=60780,Middle Eastern
-mamouns-falafel-restaurant-new-haven?search_key=60780,Falafel
-three-sheets-new-haven?search_key=60780,Dive Bars
-three-sheets-new-haven?search_key=60780,American (Traditional)
-mezcal-new-haven?search_key=60780,Mexican
-mezcal-new-haven?search_key=60780,Bars
-meat-and-co-new-haven?search_key=60780,Sandwiches
-zois-on-orange-new-haven?search_key=60780,Delis
-zois-on-orange-new-haven?search_key=60780,Breakfast & Brunch
-zois-on-orange-new-haven?search_key=60780,Sandwiches
-new-haven-taste-of-china-new-haven,Szechuan
-oak-haven-table-and-bar-new-haven,Gastropubs
-oak-haven-table-and-bar-new-haven,Tapas Bars
-oak-haven-table-and-bar-new-haven,Cocktail Bars
-the-pantry-new-haven,Breakfast & Brunch
-cave-a-vin-new-haven,Wine Bars
-cave-a-vin-new-haven,American (New)
-cave-a-vin-new-haven,Cafes
-fornarellis-ristorante-new-haven,Italian
-rice-pot-thai-cuisine-new-haven,Thai
-cedarhurst-cafe-new-haven,Cafes
-cedarhurst-cafe-new-haven,Coffee & Tea
-ricky-ds-rib-shack-new-haven-4,Food Trucks
-ricky-ds-rib-shack-new-haven-4,Barbeque
-tarry-lodge-new-haven,Italian
-tarry-lodge-new-haven,Pizza
-cask-republic-new-haven,American (New)
+skappo-new-haven,Italian
 la-cosinita-mexican-cafe-new-haven,Mexican
 louis-lunch-new-haven,Burgers
 louis-lunch-new-haven,Salad
-ro%C3%ACa-restaurant-and-cafe-new-haven-2,French
-ro%C3%ACa-restaurant-and-cafe-new-haven-2,Italian
-ro%C3%ACa-restaurant-and-cafe-new-haven-2,Breakfast & Brunch
 patricias-restaurant-new-haven,Diners
 116-crown-new-haven,Wine Bars
 116-crown-new-haven,Mediterranean
@@ -99,42 +46,95 @@ johnny-salamis-new-haven,American (New)
 pho-and-spice-new-haven,Vietnamese
 pho-and-spice-new-haven,Thai
 pho-and-spice-new-haven,Soup
-atelier-florian-new-haven,American (New)
-atelier-florian-new-haven,Seafood
 olea-new-haven-2,Mediterranean
 olea-new-haven-2,Spanish
+pho-and-spice-new-haven,Vietnamese
+pho-and-spice-new-haven,Thai
+pho-and-spice-new-haven,Soup
+atelier-florian-new-haven,American (New)
+atelier-florian-new-haven,Seafood
 caffe-bravo-new-haven,Italian
+ducs-place-new-haven,Vietnamese
+ducs-place-new-haven,Sandwiches
+ducs-place-new-haven,Vegan
+sallys-apizza-new-haven,Pizza
+kitchen-zinc-new-haven-2,Pizza
+kitchen-zinc-new-haven-2,Gluten-Free
+bar-new-haven,Pizza
+bar-new-haven,Bars
+bar-new-haven,Dance Clubs
 pho-ketkeo-new-haven,Laotian
 pho-ketkeo-new-haven,Thai
 pho-ketkeo-new-haven,Soup
-cviche-181-new-haven,Seafood
-cviche-181-new-haven,Peruvian
-temple-grill-new-haven,American (New)
-temple-grill-new-haven,Desserts
-temple-grill-new-haven,Breakfast & Brunch
-sallys-apizza-new-haven,Pizza
-consiglios-new-haven-3,Italian
-temple-grill-new-haven,American (New)
-temple-grill-new-haven,Desserts
-temple-grill-new-haven,Breakfast & Brunch
-consiglios-new-haven-3,Italian
-cviche-181-new-haven,Seafood
-cviche-181-new-haven,Peruvian
+jordans-hot-dogs-and-mac-new-haven,Hot Dogs
+jordans-hot-dogs-and-mac-new-haven,Burgers
+jordans-hot-dogs-and-mac-new-haven,Hot Dogs
+jordans-hot-dogs-and-mac-new-haven,Burgers
 ay-arepa-new-haven,Food Stands
+bar-new-haven,Pizza
+bar-new-haven,Bars
+bar-new-haven,Dance Clubs
+fryborg-new-haven,Food Trucks
+fryborg-new-haven,American (Traditional)
 zafra-cuban-restaurant-and-rum-bar-new-haven-2,Bars
 zafra-cuban-restaurant-and-rum-bar-new-haven-2,Cuban
 zafra-cuban-restaurant-and-rum-bar-new-haven-2,Spanish
-miyas-sushi-new-haven,Sushi Bars
-miyas-sushi-new-haven,Japanese
-fryborg-new-haven,Food Trucks
-fryborg-new-haven,American (Traditional)
-east-rock-coffee-new-haven,Coffee & Tea
-east-rock-coffee-new-haven,Sandwiches
 geronimo-tequila-bar-and-southwest-grill-new-haven,Tex-Mex
 geronimo-tequila-bar-and-southwest-grill-new-haven,Bars
+harvest-new-haven-2,Wine Bars
+harvest-new-haven-2,American (New)
+miyas-sushi-new-haven,Sushi Bars
+miyas-sushi-new-haven,Japanese
+archie-moores-bar-and-restaurant-new-haven,Dive Bars
+archie-moores-bar-and-restaurant-new-haven,Chicken Wings
+bull-and-swine-new-haven-2,Southern
+bull-and-swine-new-haven-2,Barbeque
+east-rock-coffee-new-haven,Coffee & Tea
+east-rock-coffee-new-haven,Sandwiches
+the-regal-beagle-new-haven,American (Traditional)
+the-regal-beagle-new-haven,Bars
+the-regal-beagle-new-haven,Soup
 big-green-truck-new-haven,Pizza
 big-green-truck-new-haven,Food Trucks
 bellas-cafe-new-haven,Breakfast & Brunch
 bellas-cafe-new-haven,Sandwiches
-archie-moores-bar-and-restaurant-new-haven,Dive Bars
-archie-moores-bar-and-restaurant-new-haven,Chicken Wings
+maison-mathis-new-haven-2,Belgian
+maison-mathis-new-haven-2,Specialty Food
+maison-mathis-new-haven-2,Coffee & Tea
+box-63-american-bar-and-grill-new-haven,American (Traditional)
+box-63-american-bar-and-grill-new-haven,Bars
+nicas-market-new-haven,Delis
+nicas-market-new-haven,Grocery
+nicas-market-new-haven,Sandwiches
+shell-and-bones-oyster-bar-and-grill-new-haven-2,Seafood
+shell-and-bones-oyster-bar-and-grill-new-haven-2,Steakhouses
+shell-and-bones-oyster-bar-and-grill-new-haven-2,Wine Bars
+ivy-wok-new-haven,Chinese
+collado-restaurant-new-haven,Spanish
+collado-restaurant-new-haven,Dominican
+collado-restaurant-new-haven,Puerto Rican
+go-greenly-new-haven,Ice Cream & Frozen Yogurt
+go-greenly-new-haven,Juice Bars & Smoothies
+go-greenly-new-haven,Salad
+union-league-cafe-new-haven,French
+union-league-cafe-new-haven,Venues & Event Spaces
+union-league-cafe-new-haven,Sandwiches
+tomatillo-taco-joint-new-haven,Mexican
+tomatillo-taco-joint-new-haven,Tex-Mex
+goodfellas-restaurant-new-haven-2,Italian
+brazis-italian-restaurant-new-haven-2,Italian
+la-carreta-new-haven,Mexican
+g-cafe-bakery-ninth-square-new-haven,Cafes
+g-cafe-bakery-ninth-square-new-haven,Bakeries
+heirloom-new-haven-2,American (New)
+oaxaca-kitchen-new-haven,Mexican
+kevins-seafood-new-haven,Seafood
+jakes-diggity-dogs-new-haven,Hot Dogs
+k2-new-haven-new-haven,Asian Fusion
+k2-new-haven-new-haven,Dim Sum
+k2-new-haven-new-haven,Japanese
+elm-city-games-new-haven,Cafes
+elm-city-games-new-haven,Tabletop Games
+l-orcio-new-haven-2,Italian
+the-trinity-bar-and-restaurant-new-haven,Bars
+the-trinity-bar-and-restaurant-new-haven,Irish
