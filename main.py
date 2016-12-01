@@ -99,7 +99,7 @@ def actions(userid, name, age, gender, con, cur):
 					finished()
 
 				'''Add restaurant as favorite for username'''
-				add_favorite(userid, rest_name)
+				add_favorite(userid, con, cur, rest_name)
 
 			elif (action == 'E'):
 				print('Who would you like to friend?')
@@ -108,7 +108,7 @@ def actions(userid, name, age, gender, con, cur):
 					friend_name = raw_input()
 				except EOFError:
 					finished()
-				add_friend(userid, friend_name)
+				add_friend(userid, con, cur, friend_name)
 
 			elif (action == 'F'):
 				finished()
@@ -141,11 +141,12 @@ def get_favorites(userid, con, cur):
 	return fav;
 
 def add_favorite(userid, con, cur, rest_name):
-	# rows = cur.execute("SELECT RestaurantId FROM Restaurants WHERE Name=?", rest_name)
-	# if (len(rows) == 0):
-	# 	print("Uh oh, we've never heard of " + rest_name)
-	# 	return
-	# cur.execute("INSERT INTO Favorites(UserId, RestaurantId) VALUES (?, ?)", username, rows[0][0])
+	cur.execute("SELECT RestaurantId FROM Restaurants WHERE Name=?", [rest_name])
+	fav = cur.fetchall()
+	if (len(fav) == 0):
+		print("Uh oh, we've never heard of " + rest_name)
+		return
+	cur.execute("INSERT INTO Favorites(UserId, RestaurantId) VALUES (?, ?)", [userid, fav[0][0]])
 	print(rest_name + " favorited!")
 
 def add_friend(userid, con, cur, friend):
