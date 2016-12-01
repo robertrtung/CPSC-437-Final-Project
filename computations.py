@@ -1,7 +1,7 @@
 import sqlite3
 import sys
 
-def compute_personal_recs(userid, numRecs, con, cur, personal, ageGender=True, friends=True, specPrice=None, specRating=None, specLael=None):
+def compute_personal_recs(userid, numRecs, con, cur, personal=True, ageGender=True, friends=True, specPrice=None, specRating=None, specLabel=None):
 
 	'''
 	With that userid, grab that person's favorites
@@ -9,57 +9,57 @@ def compute_personal_recs(userid, numRecs, con, cur, personal, ageGender=True, f
 
 	# Create set of id's of favorite restaurants for user
 	favoriteIdsSet = set()
-	cur.execute("SELECT RestaurantId FROM  favorites WHERE UserId = ?", [userid])
-	favorites = cur.fetchall()
+	favorites = con.execute("SELECT RestaurantId FROM  favorites WHERE UserId = ?", [userid])
 	for favorite in favorites:
-		favoriteIdsSet.add(favorite)
+		favoriteIdsSet.add(favorite[0])
 
 	'''
 	Using the favorites, perform computations
 	'''
-	cur.execute("SELECT * FROM restaurants")
-	restaurants = cur.fetchall()
+	restaurants = con.execute("SELECT * FROM restaurants")
 
 	# Create set of favorite and not favorite restaurants
 	favoriteSet = set()
 	notFavoriteSet = set()
 
 	for restaurant in restaurants:
-		if restaurant["RestaurantId"] in favoriteIdsSet:
+		if restaurant[0] in favoriteIdsSet:
 			favoriteSet.add(restaurant)
 		else:
-			if ((specPrice and restaurant["specPrice"] == specPrice) or (not specPrice)) and ((specRating and restaurant["specRating"] == specRating) or (not specRating)):
+			if ((specPrice and restaurant[2] == specPrice) or (not specPrice)) and ((specRating and restaurant[5] == specRating) or (not specRating)):
 				if not specLabel:
 					notFavoriteSet.add(restaurant)
-				cur.execute("SELECT * FROM labels WHERE RestaurantId = ? AND Label = ?", [restaurant["RestaurantId"], specLabel])
-				labelFound = cur.fetchall()
-				if len(labelFound) != 0:
-					notFavoriteSet.add(restaurant)
+				else:
+					cur.execute("SELECT * FROM labels WHERE RestaurantId = ? AND Label = ?", [restaurant[0], specLabel])
+					labelFound = cur.fetchall()
+					if len(labelFound) != 0:
+						notFavoriteSet.add(restaurant)
 
 	# Find numRecs restaurant with minimum distance
 	minDists = []
 	minRests = []
+	currSum = 0
 
 	if personal:
 		for i in range(numRecs):
-			minDists.add(sys.maxint)
-			minRests.add(None)
+			minDists.append(sys.maxint)
+			minRests.append(None)
 
 		for notFav in notFavoriteSet:
-			cur.execute("SELECT * FROM labels WHERE RestaurantId = ?", [notFav["RestaurantId"]])
+			cur.execute("SELECT * FROM labels WHERE RestaurantId = ?", [notFav[0]])
 			labelsNotFav = cur.fetchall()
 			for fav in favoriteSet:
-				cur.execute("SELECT * FROM labels WHERE RestaurantId = ?", [fav["RestaurantId"]])
+				cur.execute("SELECT * FROM labels WHERE RestaurantId = ?", [fav[0]])
 				labelsFav = cur.fetchall()
 				currSum += dist(notFav,fav,labelsNotFav,labelsFav)
-			e = empty(minDists)
+			e = empty(minRests)
 			if e != -1:
 				minDists[e] = currSum
-				minRest[e] = notFav
+				minRests[e] = notFav
 				min_sort(minDists,minRests,e)
-			if minDists[0] > currSum:
+			elif minDists[0] > currSum:
 				minDists[0] = currSum
-				minRest[0] = notFav
+				minRests[0] = notFav
 				min_sort(minDists,minRests,0)
 			currSum = 0
 
@@ -71,7 +71,7 @@ def compute_personal_recs(userid, numRecs, con, cur, personal, ageGender=True, f
 	if ageGender:
 		cur.execute("SELECT * FROM Users WHERE UserId = ?", [userid])
 		currentUser = cur.fetchall()
-		ageGenderRecs = compute_age_gender(currentUser["Age"], currentUser["Gender"], cur)
+		ageGenderRecs = compute_age_gender(currentUser[2], currentUser[3], cur)
 
 	'''
 	Incorporate friend data
@@ -93,6 +93,8 @@ def compute_personal_recs(userid, numRecs, con, cur, personal, ageGender=True, f
 			friendRecs = friendRecs + cur.fetchall()
 
 	# Return all recommendations
+	print(minDists)
+	minRests.reverse()
 	return [minRests,ageGenderRecs,friendRecs]
 
 def compute_age_gender(age, gender, numRecs, cur):
@@ -112,24 +114,24 @@ def compute_age_gender(age, gender, numRecs, cur):
 	return ageGenderRecs
 
 def dist(rest1, rest2, rest1Labels, rest2Labels):
-	physicalDist = (abs(rest1["Latitude"]-rest2["Latitude"]) ** 2 + abs(rest1["Longitude"]-rest2["Longitude"]) ** 2) ** (0.5)
-	ratingDiff = abs(rest1["Rating"]-rest2["Rating"])
-	priceDiff = abs(rest1["Price"]-rest2["Price"])
+	physicalDist = (abs(rest1[3]-rest2[3]) ** 2 + abs(rest1[4]-rest2[4]) ** 2) ** (0.5)
+	ratingDiff = abs(rest1[5]-rest2[5])
+	priceDiff = abs(rest1[2]-rest2[2])
 
 	rest1LabelList = []
 	rest2LabelList = []
 	for lab in rest1Labels:
-		rest1LabelList.add(lab["Label"])
+		rest1LabelList.append(lab[1])
 	for lab in rest2Labels:
-		rest2LabelList.add(lab["Label"])
+		rest2LabelList.append(lab[1])
 
 	labeldiff = 0
 
-	for lab in rest1LabeList:
+	for lab in rest1LabelList:
 		if lab not in rest2LabelList:
 			labeldiff += 1
 
-	for lab in rest2LabeList:
+	for lab in rest2LabelList:
 		if lab not in rest1LabelList:
 			labeldiff += 1
 
@@ -141,7 +143,7 @@ Sort starting from from_index so that the remainder of the array is in order fro
 '''
 def min_sort(dists, rests, from_index):
 	j = from_index
-	for i in range(from_index,len(dists)):
+	for i in range(from_index+1,len(dists)):
 		if dists[j] < dists[i]:
 			dists[i], dists[j] = dists[j], dists[i]
 			rests[i], rests[j] = rests[j], rests[i]
@@ -163,8 +165,8 @@ Find the numRecs most common values in the list
 '''
 def find_most_common(rests, numRecs):
 	rest_to_amount = []
-	rest_to_amount.add([])
-	rest_to_amount.add([])
+	rest_to_amount.append([])
+	rest_to_amount.append([])
 	amount_to_rest = {}
 
 	for rest in rests:
@@ -172,11 +174,11 @@ def find_most_common(rests, numRecs):
 			rest_to_amount[rest] += 1
 			amount_to_rest[rest_to_amount[rest] - 1].remove(rest)
 			if rest_to_amount[rest] in amount_to_rest:
-				amount_to_rest[rest_to_amount[rest]].add(rest)
+				amount_to_rest[rest_to_amount[rest]].append(rest)
 			else:
 				amount_to_rest[rest_to_amount[rest]] = [rest]
 		else:
-			amount_to_rest[1].add(rest)
+			amount_to_rest[1].append(rest)
 			rest_to_amount[rest] = 1
 
 	numRecd = numRecs
@@ -185,7 +187,7 @@ def find_most_common(rests, numRecs):
 		curr = rest_to_amount[len(rest_to_amount) - 1 - i]
 		for c in curr:
 			if numRecd > 0:
-				out.add(c)
+				out.append(c)
 				numRecd -= 1
 			else:
 				break
