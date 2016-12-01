@@ -3,9 +3,10 @@ import sys
 import os
 
 def main():
-	if (os.path.isfile('db/restaurantPredictions.db') and len(sys.argv) > 1):
+	if len(sys.argv) > 1:
 		print('Database reset with fake data')
-		os.remove('db/restaurantPredictions.db')
+		if os.path.isfile('db/restaurantPredictions.db'):
+			os.remove('db/restaurantPredictions.db')
 		con = initdb()
 		init_fake(con)
 	else: 
@@ -13,6 +14,7 @@ def main():
 
 def init_fake(con):
 
+	con.execute('DROP TABLE IF EXISTS Users')
 	con.execute('''CREATE TABLE Users
 		(UserId 		INTEGER PRIMARY KEY     AUTOINCREMENT,
 			Name           TEXT    NOT NULL,
@@ -32,7 +34,28 @@ def init_fake(con):
 	for user in users:
 		print('UserId: {}, Name: {}, Age: {}, Gender: {}').format(user[0], user[1], user[2], user[3])
 
+	con.execute('DROP TABLE IF EXISTS Labels')
+	con.execute('''CREATE TABLE Labels
+		(RestaurantId		INTEGER 	NOT NULL,
+			Label           	TEXT 	NOT NULL,
+			PRIMARY KEY(RestaurantId, Label));''')
+	print "labels table created successfully";
 
+	con.execute('''INSERT INTO Labels(RestaurantId, Label)
+					VALUES (1, "GOOD");''')
+
+	con.execute('''INSERT INTO Labels(RestaurantId, Label)
+					VALUES (2, "GOOD");''')
+
+	con.execute('''INSERT INTO Labels(RestaurantId, Label)
+					VALUES (3, "BAD");''')
+	con.commit()
+
+	labels = con.execute('''SELECT * FROM labels''')
+	for label in labels:
+		print('RestaurantId: {}, Label: {}').format(label[0], label[1])
+
+	con.execute('DROP TABLE IF EXISTS Restaurants')
 	con.execute('''CREATE TABLE Restaurants
 		(RestaurantId		INTEGER 	PRIMARY KEY     AUTOINCREMENT,
 			Name           	TEXT   		 NOT NULL,
@@ -69,7 +92,28 @@ def init_fake(con):
 
 def initdb():
 	con = sqlite3.connect('db/restaurantPredictions.db')
+
+	con.execute('DROP TABLE IF EXISTS Users')
+	con.execute('''CREATE TABLE Users
+		(UserId 		INTEGER PRIMARY KEY     AUTOINCREMENT,
+			Name           TEXT    NOT NULL,
+			Age            INT     NOT NULL,
+			Gender        CHAR(50));''')
+	print "Users table created successfully";
+
+	con.execute('''INSERT INTO Users(Name, Age, Gender)
+					VALUES ('Sean', 50, 'Male');''')
+	con.execute('''INSERT INTO Users(Name, Age, Gender)
+					VALUES ('James', 50, 'Male');''')
+	con.execute('''INSERT INTO Users(Name, Age, Gender)
+					VALUES ('Kristina', 49, 'Female');''')
+	con.commit()
+
+	users = con.execute('''SELECT * FROM Users''')
+	for user in users:
+		print('UserId: {}, Name: {}, Age: {}, Gender: {}').format(user[0], user[1], user[2], user[3])
 	
+	con.execute('DROP TABLE IF EXISTS Favorites')
 	con.execute('''CREATE TABLE Favorites
 		(UserId		INTEGER 	NOT NULL,
 			RestaurantId           	INTEGER 	NOT NULL,
@@ -88,26 +132,7 @@ def initdb():
 	for favorite in favorites:
 		print('UserId: {}, RestaurantId: {}').format(favorite[0], favorite[1])
 
-	con.execute('''CREATE TABLE labels
-		(RestaurantId		INTEGER 	NOT NULL,
-			Label           	TEXT 	NOT NULL,
-			PRIMARY KEY(RestaurantId, Label));''')
-	print "labels table created successfully";
-
-	con.execute('''INSERT INTO labels(RestaurantId, Label)
-					VALUES (1, "GOOD");''')
-
-	con.execute('''INSERT INTO labels(RestaurantId, Label)
-					VALUES (2, "GOOD");''')
-
-	con.execute('''INSERT INTO labels(RestaurantId, Label)
-					VALUES (3, "BAD");''')
-	con.commit()
-
-	labels = con.execute('''SELECT * FROM labels''')
-	for label in labels:
-		print('RestaurantId: {}, Label: {}').format(label[0], label[1])
-
+	con.execute('DROP TABLE IF EXISTS Friends')	
 	con.execute('''CREATE TABLE Friends
 		(UserId1		INTEGER 	NOT NULL,
 			UserId2           	INTEGER 	NOT NULL,
