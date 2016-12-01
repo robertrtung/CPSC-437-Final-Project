@@ -8,15 +8,22 @@ def initdb():
 	cur = con.cursor()
 	return con
 
-def sign_in(con, cur):
-	print('(A) Sign In (B) Register')
+def sign_in(cur):
+	print('Welcome! (A) Sign In (B) Register')
 	try:
 		next = raw_input()
 	except EOFError:
 		exit()
 
 	if (next == 'A'):
-		username = input_name()
+		'''
+		Grab the username from input
+		'''
+		print('What is your name?')
+		try:
+			username = raw_input()
+		except EOFError:
+			exit()
 		print('Signing in as ' + username)
 
 		cur.execute('SELECT * FROM Users WHERE Name=?', [username])
@@ -26,63 +33,7 @@ def sign_in(con, cur):
 			return -1
 		return me[0]
 
-	elif (next == 'B'):
-		username = input_name()
-		cur.execute('SELECT * FROM Users WHERE Name=?', [username])
-		me = cur.fetchall()
-		if (len(me) != 0):
-			print('Username is already taken')
-			return -1
-
-		print('How old are you?')
-		try:
-			age = raw_input()
-		except EOFError:
-			exit()
-
-		try:
-			age_num = int(age)
-		except ValueError:
-			print('Please enter an integer age')
-			return -1
-
-		print('What is your gender?')
-		try:
-			gender = raw_input()
-		except EOFError:
-			exit()
-
-		cur.execute('''INSERT INTO Users(Name, Age, Gender)
-			VALUES (?, ?, ?);''', [username, age_num, gender])
-		con.commit()
-
-		# Testing insertion
-		cur.execute('''SELECT * FROM Users''')
-		users = cur.fetchall()
-		for user in users:
-			print('UserId: {}, Name: {}, Age: {}, Gender: {}').format(user[0], user[1], user[2], user[3])
-
-		cur.execute('SELECT * FROM Users WHERE Name=?', [username])
-		me = cur.fetchall()
-		if (len(me) == 0):
-			print('Registration failed')
-			return -1
-		return me[0]
-
-	else:
-		print('Please choose A or B.')
-		return -1
-
-def input_name():
-	'''
-	Grab the username from input
-	'''
-	print('What is your name?')
-	try:
-		username = raw_input()
-	except EOFError:
-		exit()
-	return username
+		print('UserId: {}').format(UserId)
 
 def finished():
 	print('Eat up!')
@@ -92,13 +43,10 @@ def main():
 	con = initdb()
 	cur = con.cursor()
 
-	print('Welcome!')
-
-	result = sign_in(con, cur)
+	result = sign_in(cur)
 	while (result == -1):
-		result = sign_in(con, cur)
+		result = sign_in(cur)
 
-	# Testing info of logged in user
 	for attr in result:
 		print(attr)
 
@@ -170,9 +118,21 @@ def actions(userid, name, age, gender, con, cur):
 		except EOFError:
 			finished()
 
-def get_recommendations(userid, con, cur):
-	'''Get recommendations based on favorites based on username'''
-	recs = computations.compute_personal_recs(userid, 5, con, cur, True, False, False)[0]
+
+def get_recommendations(userid, con, cur, which=0):
+	if which == 0:
+		personal = True
+		ageGender = False
+		friends = False
+	elif which == 1:
+		personal = False
+		ageGender = True
+		friends = False
+	elif which == 2:
+		personal = False
+		ageGender = False
+		friends = True
+	recs = computations.compute_personal_recs(userid, 5, con, cur, personal, ageGender, friends)[which]
 	return recs
 
 def get_favorites(userid, con, cur):
@@ -180,7 +140,7 @@ def get_favorites(userid, con, cur):
 	fav = cur.fetchall()
 	return fav;
 
-def add_favorite(username, rest_name):
+def add_favorite(userid, con, cur, rest_name):
 	# rows = cur.execute("SELECT RestaurantId FROM Restaurants WHERE Name=?", rest_name)
 	# if (len(rows) == 0):
 	# 	print("Uh oh, we've never heard of " + rest_name)
@@ -188,7 +148,7 @@ def add_favorite(username, rest_name):
 	# cur.execute("INSERT INTO Favorites(UserId, RestaurantId) VALUES (?, ?)", username, rows[0][0])
 	print(rest_name + " favorited!")
 
-def add_friend(username, friend):
+def add_friend(userid, con, cur, friend):
 	# rows = cur.execute("SELECT * FROM Users WHERE UserId=?", friend)
 	# if (len(rows) == 0):
 	# 	print("Uh oh, we've never heard of " + rest_name)
