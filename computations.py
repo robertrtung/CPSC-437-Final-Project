@@ -1,15 +1,15 @@
 import sqlite3
 import sys
 
-def compute_personal_recs(username, numRecs, con, cur, personal, ageGender, friends):
+def compute_personal_recs(userid, numRecs, con, cur, personal, ageGender, friends):
 
 	'''
-	With that username, grab that person's favorites
+	With that userid, grab that person's favorites
 	'''
 
 	# Create set of id's of favorite restaurants for user
 	favoriteIdsSet = set()
-	favorites = cur.execute("SELECT RestaurantId FROM  favorites WHERE UserId = ?", username)
+	favorites = cur.execute("SELECT RestaurantId FROM  favorites WHERE UserId = ?", userid)
 	for favorite in favorites:
 		favoriteIdsSet.add(favorite)
 
@@ -60,7 +60,7 @@ def compute_personal_recs(username, numRecs, con, cur, personal, ageGender, frie
 	ageGenderRecs = []
 
 	if ageGender:
-		currentUser = cur.execute("SELECT * FROM Users WHERE UserId = ?", username)
+		currentUser = cur.execute("SELECT * FROM Users WHERE UserId = ?", userid)
 		ageGenderUsers = cur.execute("SELECT UserId FROM Users WHERE Age = ? AND Gender = ?", currentUser["Age"], currentUser["Gender"])
 
 		for user in ageGenderUsers:
@@ -77,7 +77,7 @@ def compute_personal_recs(username, numRecs, con, cur, personal, ageGender, frie
 	friendRecs = []
 
 	if friends:
-		friendUsers = cur.execute("SELECT UserId2 FROM Friends WHERE UserId1 = ?", username)
+		friendUsers = cur.execute("SELECT UserId2 FROM Friends WHERE UserId1 = ?", userid)
 
 		for user in friendUsers:
 			friendRests = friendRests + cur.execute("SELECT RestaurantId FROM Favorites WHERE UserId = ?", user)
