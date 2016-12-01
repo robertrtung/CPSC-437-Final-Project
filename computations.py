@@ -56,19 +56,11 @@ def compute_personal_recs(userid, numRecs, con, cur, personal, ageGender, friend
 	'''
 	Incorporate user data
 	'''
-	ageGenderRests = []
 	ageGenderRecs = []
 
 	if ageGender:
 		currentUser = cur.execute("SELECT * FROM Users WHERE UserId = ?", userid)
-		ageGenderUsers = cur.execute("SELECT UserId FROM Users WHERE Age = ? AND Gender = ?", currentUser["Age"], currentUser["Gender"])
-
-		for user in ageGenderUsers:
-			ageGenderRests = ageGenderRests + cur.execute("SELECT RestaurantId FROM Favorites WHERE UserId", user)
-
-		ageGenderIndices = find_most_common(ageGenderRests, numRecs)
-		for index in ageGenderIndices:
-			ageGenderRecs = ageGenderRecs + cur.execute("SELECT * FROM Restaurants WHERE RestaurantId = ?", index)
+		ageGenderRecs = compute_age_gender(currentUser["Age"], currentUser["Gender"], cur)
 
 	'''
 	Incorporate friend data
@@ -89,6 +81,18 @@ def compute_personal_recs(userid, numRecs, con, cur, personal, ageGender, friend
 	# Return all recommendations
 	return [minRests,ageGenderRecs,friendRecs]
 
+def compute_age_gender(age, gender, numRecs, cur):
+	ageGenderRests = []
+	ageGenderUsers = cur.execute("SELECT UserId FROM Users WHERE Age = ? AND Gender = ?", age, gender)
+
+	for user in ageGenderUsers:
+		ageGenderRests = ageGenderRests + cur.execute("SELECT RestaurantId FROM Favorites WHERE UserId", user)
+
+	ageGenderIndices = find_most_common(ageGenderRests, numRecs)
+	for index in ageGenderIndices:
+		ageGenderRecs = ageGenderRecs + cur.execute("SELECT * FROM Restaurants WHERE RestaurantId = ?", index)
+
+	return ageGenderRecs
 
 def dist(rest1, rest2, rest1Labels, rest2Labels):
 	physicalDist = (abs(rest1["Latitude"]-rest2["Latitude"]) ** 2 + abs(rest1["Longitude"]-rest2["Longitude"]) ** 2) ** (0.5)
