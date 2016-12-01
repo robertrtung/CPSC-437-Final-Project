@@ -41,6 +41,14 @@ def initdb():
 					VALUES ('Shake Shack 2', 3, 1.234, 5.678, 4.5);''')
 	con.execute('''INSERT INTO Restaurants(Name, Price, Lat, Lng, Rating)
 					VALUES ('Not Shake Shack', 1, 2.345, 6.789, 1);''')
+	con.execute('''INSERT INTO Restaurants(Name, Price, Lat, Lng, Rating)
+					VALUES ('Not Shake Shack 2', 1, 2.345, 6.789, 1);''')
+	con.execute('''INSERT INTO Restaurants(Name, Price, Lat, Lng, Rating)
+					VALUES ('Not Shake Shack 3', 1, 2.345, 6.789, 1);''')
+	con.execute('''INSERT INTO Restaurants(Name, Price, Lat, Lng, Rating)
+					VALUES ('Not Shake Shack 4', 1, 2.345, 6.789, 1);''')
+	con.execute('''INSERT INTO Restaurants(Name, Price, Lat, Lng, Rating)
+					VALUES ('Not Shake Shack 5 DONT RECOMMEND', 1, 10.345, 6.789, 1);''')
 	con.commit()
 
 	rests = con.execute('''SELECT * FROM Restaurants''')
@@ -60,6 +68,26 @@ def initdb():
 	favorites = con.execute('''SELECT * FROM Favorites''')
 	for favorite in favorites:
 		print('UserId: {}, RestaurantId: {}').format(favorite[0], favorite[1])
+
+	con.execute('''CREATE TABLE labels
+		(RestaurantId		INTEGER 	NOT NULL,
+			Label           	TEXT 	NOT NULL,
+			PRIMARY KEY(RestaurantId, Label));''')
+	print "labels table created successfully";
+
+	con.execute('''INSERT INTO labels(RestaurantId, Label)
+					VALUES (1, "GOOD");''')
+
+	con.execute('''INSERT INTO labels(RestaurantId, Label)
+					VALUES (2, "GOOD");''')
+
+	con.execute('''INSERT INTO labels(RestaurantId, Label)
+					VALUES (3, "BAD");''')
+	con.commit()
+
+	labels = con.execute('''SELECT * FROM labels''')
+	for label in labels:
+		print('RestaurantId: {}, Label: {}').format(label[0], label[1])
 
 if __name__ == "__main__":
 	main()

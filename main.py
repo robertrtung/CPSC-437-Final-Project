@@ -59,15 +59,16 @@ def main():
 	Gender = result[3]
 
 	# computations.compute_recs(username)
-	actions()
+	actions(UserId, Name, Age, Gender, con, cur)
 
 def output(places):
 	i = 1
 	for place in places:
-		print('{}.' + place['name'] + '\n\t Price: {}\n\t Rating: {}').format(i, place['price'], place['rating'])
-		i += 1
+		if place:
+			print('{}.' + place[1] + '\n\t Price: {}\n\t Rating: {}').format(i, place[2], place[5])
+			i += 1
 
-def actions():
+def actions(userid, name, age, gender, con, cur):
 	while(True):
 		try:
 			print('What now?\n\t(A) Recommend restaurants\n\t(B) List my favorites\n\t(C) List my friends\n\t(D) Add a favorite\n\t(E) Add a friend\n\t(F) Done!')
@@ -75,7 +76,7 @@ def actions():
 			if (action == 'A'):
 				print('Check out these places:')
 				'''Get restaurant recommendation based on favorites'''
-				recs = get_recommendations(username)
+				recs = get_recommendations(userid, con, cur)
 				output(recs)
 
 			elif (action == 'B'):
@@ -120,7 +121,7 @@ def actions():
 		except EOFError:
 			finished()
 
-def get_recommendations(username):
+def get_recommendations(userid, con, cur):
 	recs = list()
 	'''TODO get recommends based on favorites based on username'''
 	# for restId in recommends
@@ -131,10 +132,11 @@ def get_recommendations(username):
 		# add['rating'] = float(rest[2])
 		# recs.append(add)
 	''' hardcoded sample '''
-	restaurant = {'name': 'Halal Guys', 'price': 2, 'rating': 4.5}
-	recs.append(restaurant)
-	restaurant = {'name': 'Chipotle', 'price': 1, 'rating': 3}
-	recs.append(restaurant)
+	# restaurant = {'name': 'Halal Guys', 'price': 2, 'rating': 4.5}
+	# recs.append(restaurant)
+	# restaurant = {'name': 'Chipotle', 'price': 1, 'rating': 3}
+	# recs.append(restaurant)
+	recs = computations.compute_personal_recs(userid, 5, con, cur, True, False, False)[0]
 	return recs
 
 def get_favorites(username):
