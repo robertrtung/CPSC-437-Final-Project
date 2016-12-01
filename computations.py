@@ -1,7 +1,7 @@
 import sqlite3
 import sys
 
-def compute_personal_recs(username, numRecs, con, cur):
+def compute_personal_recs(username, numRecs, con, cur, personal, ageGender, friends):
 
 	'''
 	With that username, grab that person's favorites
@@ -52,60 +52,61 @@ def compute_personal_recs(username, numRecs, con, cur):
 	minDists = []
 	minRests = []
 
-	for i in range(numRecs):
-		minDists.add(sys.maxint)
-		minRests.add(None)
+	if personal:
+		for i in range(numRecs):
+			minDists.add(sys.maxint)
+			minRests.add(None)
 
-	for notFav in notFavoriteSet:
-		labelsNotFav = cur.execute("SELECT * FROM labels WHERE RestaurantId = %i", (notFav["RestaurantId"]))
-		for fav in favoriteSet:
-			labelsFav = cur.execute("SELECT * FROM labels WHERE RestaurantId = %i", (fav["RestaurantId"]))
-			currSum += dist(notFav,fav,labelsNotFav,labelsFav)
-		e = empty(minDists)
-		if e != -1:
-			minDists[e] = currSum
-			minRest[e] = notFav
-			min_sort(minDists,minRests,e)
-		if minDists[0] > currSum:
-			minDists[0] = currSum
-			minRest[0] = notFav
-			min_sort(minDists,minRests,0)
-		currSum = 0
+		for notFav in notFavoriteSet:
+			labelsNotFav = cur.execute("SELECT * FROM labels WHERE RestaurantId = %i", (notFav["RestaurantId"]))
+			for fav in favoriteSet:
+				labelsFav = cur.execute("SELECT * FROM labels WHERE RestaurantId = %i", (fav["RestaurantId"]))
+				currSum += dist(notFav,fav,labelsNotFav,labelsFav)
+			e = empty(minDists)
+			if e != -1:
+				minDists[e] = currSum
+				minRest[e] = notFav
+				min_sort(minDists,minRests,e)
+			if minDists[0] > currSum:
+				minDists[0] = currSum
+				minRest[0] = notFav
+				min_sort(minDists,minRests,0)
+			currSum = 0
 
 	'''
 	Incorporate user data
 	'''
-	currentUser = cur.execute("SELECT * FROM Users WHERE UserId = ?", username)
-	ageGenderUsers = cur.execute("SELECT UserId FROM Users WHERE Age = ? AND Gender = ?", currentUser["Age"], currentUser["Gender"])
-	con.commit()
-
 	ageGenderRests = []
-
-	for user in ageGenderUsers:
-		ageGenderRests = ageGenderRests + cur.execute("SELECT RestaurantId FROM Favorites WHERE UserId", user)
-
-	ageGenderIndices = find_most_common(ageGenderRests, numRecs)
-
 	ageGenderRecs = []
-	for index in ageGenderIndices:
-		ageGenderRecs = ageGenderRecs + cur.execute("SELECT * FROM Restaurants WHERE RestaurantId = ?", index)
+
+	if ageGender:
+		currentUser = cur.execute("SELECT * FROM Users WHERE UserId = ?", username)
+		ageGenderUsers = cur.execute("SELECT UserId FROM Users WHERE Age = ? AND Gender = ?", currentUser["Age"], currentUser["Gender"])
+		con.commit()
+
+		for user in ageGenderUsers:
+			ageGenderRests = ageGenderRests + cur.execute("SELECT RestaurantId FROM Favorites WHERE UserId", user)
+
+		ageGenderIndices = find_most_common(ageGenderRests, numRecs)
+		for index in ageGenderIndices:
+			ageGenderRecs = ageGenderRecs + cur.execute("SELECT * FROM Restaurants WHERE RestaurantId = ?", index)
 
 	'''
 	Incorporate friend data
 	'''
-	friendUsers = cur.execute("SELECT UserId2 FROM Friends WHERE UserId1 = ?", username)
-	con.commit()
-
 	friendRests = []
-
-	for user in friendUsers:
-		friendRests = friendRests + cur.execute("SELECT RestaurantId FROM Favorites WHERE UserId = ?", user)
-
-	friendIndices = find_most_common(friendRests, numRecs)
-
 	friendRecs = []
-	for index in friendIndices:
-		friendRecs = friendRecs + cur.execute("SELECT * FROM Restaurants WHERE RestaurantId = ?", index)
+
+	if friends:
+		friendUsers = cur.execute("SELECT UserId2 FROM Friends WHERE UserId1 = ?", username)
+		con.commit()
+
+		for user in friendUsers:
+			friendRests = friendRests + cur.execute("SELECT RestaurantId FROM Favorites WHERE UserId = ?", user)
+
+		friendIndices = find_most_common(friendRests, numRecs)
+		for index in friendIndices:
+			friendRecs = friendRecs + cur.execute("SELECT * FROM Restaurants WHERE RestaurantId = ?", index)
 
 	# Return all recommendations
 	return [minRests,ageGenderRecs,friendRecs]
