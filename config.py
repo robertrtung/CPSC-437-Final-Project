@@ -49,7 +49,8 @@ def initdb():
 
 	con.execute('''CREATE TABLE Favorites
 		(UserId		INTEGER 	PRIMARY KEY     NOT NULL,
-			RestaurantId           	INTEGER 	PRIMARY KEY  		 NOT NULL);''')
+			RestaurantId           	INTEGER 	PRIMARY KEY  		 NOT NULL,
+			PRIMARY KEY(UserId, RestaurantId));''')
 	print "Favorites table created successfully";
 
 	con.execute('''INSERT INTO Favorites(UserId, RestaurantId)
