@@ -117,17 +117,33 @@ def output(places):
 			print('{}.' + place[1] + '\n\t Price: {}\n\t Rating: {}').format(i, '$' * place[2], round(place[5], 2))
 			i += 1
 
+def rec_type(userid, con, cur):
+	print('Based on what should we choose your recommendations?\n\t(A) What I favorited\n\t(B) What my friends favorited\n\t(C) What people like me favorited')
+	try:
+		choice = raw_input()
+	except EOFError:
+		return -1
+
+	options = ['A', 'B', 'C']
+	# TODO: verify calls
+	if (choice in options):
+		# print('Recommendations based on ' + choice + ' {}').format(options.index(choice))
+		return get_recommendations(userid, con, cur, options.index(choice))
+	else:	
+		return -1
+
 def actions(userid, name, age, gender, con, cur):
 	while(True):
 		try:
 			print('What now?\n\t(A) Recommend restaurants\n\t(B) List my favorites\n\t(C) List my friends\n\t(D) Add a favorite\n\t(E) Add a friend\n\t(F) Done!')
 			action = raw_input().upper()
 			if (action == 'A'):
-				print('Check out these places:')
-				'''Get restaurant recommendation based on favorites'''
-				recs = get_pca_recommendations(userid, con, cur)
-				output(recs)
-
+				choice = rec_type(userid, con, cur)
+				while (choice == -1):
+					print('Please choose A, B, or C.')
+					choice = rec_type(userid, con, cur)
+				else:
+					output(choice)
 			elif (action == 'B'):
 				print('Here are you favorites:')
 				'''Query DB for favorites based on username'''
@@ -170,11 +186,10 @@ def actions(userid, name, age, gender, con, cur):
 		except EOFError:
 			finished()
 
-
 def get_pca_recommendations(userid, con, cur):
 	return pca.pca(userid, con, cur)
 
-def get_recommendations(userid, con, cur, which=0):
+def get_recommendations(userid, con, cur, which):
 	if which == 0:
 		personal = True
 		ageGender = False
