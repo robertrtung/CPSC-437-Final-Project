@@ -44,6 +44,7 @@ Next, the recommendations we provide account for demographic information, such a
 ###Running our application
 ####Installation if necessary
 
+ ```
   sudo easy_install pip
  
   sudo pip install -U scikit-learn
@@ -51,6 +52,7 @@ Next, the recommendations we provide account for demographic information, such a
   python config.py
   
   python main.py
+ ```
 
 ###Ideas for further improvement
 
