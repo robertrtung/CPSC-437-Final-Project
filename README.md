@@ -42,10 +42,14 @@ First, our platform engages users socially, by incorporating friend groups into 
 Next, the recommendations we provide account for demographic information, such as age and gender. This helps users find restaurants that not only match their taste preferences, but might also align with their social preferences more closely.
 
 ###Running our application
-Installation if necessary
+####Installation if necessary
+
   sudo easy_install pip
+ 
   sudo pip install -U scikit-learn
+  
   python config.py
+  
   python main.py
 
 ###Ideas for further improvement
