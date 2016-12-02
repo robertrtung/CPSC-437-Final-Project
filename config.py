@@ -1,6 +1,7 @@
 import sqlite3
 import sys
 import os
+from rand_users import *
 
 def main():
 	# if len(sys.argv) > 1:
@@ -93,6 +94,12 @@ def init_fake(con):
 def initdb():
 	con = sqlite3.connect('db/restaurantPredictions.db')
 
+	rests = con.execute('''SELECT * FROM Restaurants''')
+	nrests = len(rests.fetchall())
+
+	rand_users, rand_favorites = generate_users(nrests, 4)
+	rand_friends = generate_friends(len(rand_users), 4)
+
 	# con.execute('DROP TABLE IF EXISTS Users')
 	con.execute('''CREATE TABLE Users
 		(UserId 		INTEGER PRIMARY KEY     AUTOINCREMENT,
@@ -107,6 +114,11 @@ def initdb():
 					VALUES ('James', 50, 'Male');''')
 	con.execute('''INSERT INTO Users(Name, Age, Gender)
 					VALUES ('Kristina', 49, 'Female');''')
+
+	for u in rand_users:
+		con.execute('''INSERT INTO Users(Name, Age, Gender)
+					VALUES (?, ?, ?);''', u)
+
 	con.commit()
 
 	users = con.execute('''SELECT * FROM Users''')
@@ -126,6 +138,11 @@ def initdb():
 					VALUES (2, 8);''')
 	con.execute('''INSERT INTO Favorites(UserId, RestaurantId)
 					VALUES (3, 9);''')
+
+	for f in rand_favorites:
+		con.execute('''INSERT INTO Favorites(UserId, RestaurantId)
+					VALUES (?, ?);''', f)
+
 	con.commit()
 
 	favorites = con.execute('''SELECT * FROM Favorites''')
@@ -143,6 +160,11 @@ def initdb():
 					VALUES (1, 2);''')
 	con.execute('''INSERT INTO Friends(UserId1, UserId2)
 					VALUES (2, 3);''')
+
+	for f in rand_friends:
+		con.execute('''INSERT INTO Friends(UserId1, UserId2)
+					VALUES (?, ?);''', f)
+
 	con.commit()
 
 	friends = con.execute('''SELECT * FROM Friends''')
