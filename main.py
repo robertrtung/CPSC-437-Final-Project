@@ -8,32 +8,81 @@ def initdb():
 	cur = con.cursor()
 	return con
 
-def sign_in(cur):
-	print('Welcome! (A) Sign In (B) Register')
-	try:
-		next = raw_input()
-	except EOFError:
-		exit()
+def sign_in(con, cur):
+	print('(A) Sign In (B) Register')
+ 	try:
+ 		next = raw_input()
+ 	except EOFError:
+ 		exit()
+ 
+ 	if (next == 'A'):
+ 		username = input_name()
+ 		print('Signing in as ' + username)
+ 
+ 		cur.execute('SELECT * FROM Users WHERE Name=?', [username])
+ 		me = cur.fetchall()
+ 		if (len(me) == 0):
+ 			print('User does not exist')
+ 			return -1
+ 		return me[0]
+ 
+ 	elif (next == 'B'):
+ 		username = input_name()
+ 		cur.execute('SELECT * FROM Users WHERE Name=?', [username])
+ 		me = cur.fetchall()
+ 		if (len(me) != 0):
+ 			print('Username is already taken')
+ 			return -1
+ 
+ 		print('How old are you?')
+ 		try:
+ 			age = raw_input()
+ 		except EOFError:
+ 			exit()
+ 
+ 		try:
+ 			age_num = int(age)
+ 		except ValueError:
+ 			print('Please enter an integer age')
+ 			return -1
+ 
+ 		print('What is your gender?')
+ 		try:
+ 			gender = raw_input()
+ 		except EOFError:
+ 			exit()
+ 
+ 		cur.execute('''INSERT INTO Users(Name, Age, Gender)
+ 			VALUES (?, ?, ?);''', [username, age_num, gender])
+ 		con.commit()
+ 
+ 		# Testing insertion
+ 		cur.execute('''SELECT * FROM Users''')
+ 		users = cur.fetchall()
+ 		for user in users:
+ 			print('UserId: {}, Name: {}, Age: {}, Gender: {}').format(user[0], user[1], user[2], user[3])
+ 
+ 		cur.execute('SELECT * FROM Users WHERE Name=?', [username])
+ 		me = cur.fetchall()
+ 		if (len(me) == 0):
+ 			print('Registration failed')
+ 			return -1
+ 		return me[0]
+ 
+ 	else:
+ 		print('Please choose A or B.')
+ 		return -1
 
-	if (next == 'A'):
-		'''
-		Grab the username from input
-		'''
-		print('What is your name?')
-		try:
-			username = raw_input()
-		except EOFError:
-			exit()
-		print('Signing in as ' + username)
-
-		cur.execute('SELECT * FROM Users WHERE Name=?', [username])
-		me = cur.fetchall()
-		if (len(me) == 0):
-			print('User does not exist')
-			return -1
-		return me[0]
-
-		print('UserId: {}').format(UserId)
+def input_name():
+ 	'''
+ 	Grab the username from input
+ 	'''
+ 	print('What is your name?')
+ 	try:
+ 		username = raw_input()
+ 	except EOFError:
+ 		exit()
+ 	return username
 
 def finished():
 	print('Eat up!')
@@ -43,9 +92,11 @@ def main():
 	con = initdb()
 	cur = con.cursor()
 
-	result = sign_in(cur)
+	print('Welcome!')
+
+	result = sign_in(con, cur)
 	while (result == -1):
-		result = sign_in(cur)
+		result = sign_in(con, cur)
 
 	for attr in result:
 		print(attr)
