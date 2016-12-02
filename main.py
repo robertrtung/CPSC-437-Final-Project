@@ -2,6 +2,7 @@ import sqlite3
 import sys
 import computations
 import config
+import pca
 
 def initdb():
 	con = sqlite3.connect('db/restaurantPredictions.db')
@@ -11,7 +12,7 @@ def initdb():
 def sign_in(con, cur):
 	print('(A) Sign In (B) Register')
  	try:
- 		next = raw_input()
+ 		next = raw_input().upper()
  	except EOFError:
  		exit()
  
@@ -113,18 +114,18 @@ def output(places):
 	i = 1
 	for place in places:
 		if place:
-			print('{}.' + place[1] + '\n\t Price: {}\n\t Rating: {}').format(i, place[2], place[5])
+			print('{}.' + place[1] + '\n\t Price: {}\n\t Rating: {}').format(i, '$' * place[2], round(place[5], 2))
 			i += 1
 
 def actions(userid, name, age, gender, con, cur):
 	while(True):
 		try:
 			print('What now?\n\t(A) Recommend restaurants\n\t(B) List my favorites\n\t(C) List my friends\n\t(D) Add a favorite\n\t(E) Add a friend\n\t(F) Done!')
-			action = raw_input()
+			action = raw_input().upper()
 			if (action == 'A'):
 				print('Check out these places:')
 				'''Get restaurant recommendation based on favorites'''
-				recs = get_recommendations(userid, con, cur)
+				recs = get_pca_recommendations(userid, con, cur)
 				output(recs)
 
 			elif (action == 'B'):
@@ -169,6 +170,9 @@ def actions(userid, name, age, gender, con, cur):
 		except EOFError:
 			finished()
 
+
+def get_pca_recommendations(userid, con, cur):
+	return pca.pca(userid, con, cur)
 
 def get_recommendations(userid, con, cur, which=0):
 	if which == 0:
