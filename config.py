@@ -1,7 +1,7 @@
 import sqlite3
 import sys
 import os
-from users import *
+from rand_users import *
 
 def main():
 	# if len(sys.argv) > 1:
