@@ -216,7 +216,8 @@ def add_favorite(userid, con, cur, rest_name):
 	if (len(fav) == 0):
 		print("Uh oh, we've never heard of " + rest_name)
 		return
-	cur.execute("INSERT INTO Favorites(UserId, RestaurantId) VALUES (?, ?)", [userid, fav[0][0]])
+	con.execute("INSERT INTO Favorites(UserId, RestaurantId) VALUES (?, ?)", [userid, fav[0][0]])
+	con.commit()
 	print(rest_name + " favorited!")
 
 def add_friend(userid, con, cur, friend):
@@ -225,7 +226,8 @@ def add_friend(userid, con, cur, friend):
 	if (len(new_friend) == 0):
 		print("Uh oh, we've never heard of " + rest_name)
 		return
-	cur.execute("INSERT INTO Friends(UserId1, UserId2) VALUES (?, ?)", [userid, new_friend[0][0]])
+	con.execute("INSERT INTO Friends(UserId1, UserId2) VALUES (?, ?)", [userid, new_friend[0][0]])
+	con.commit()
 	print(friend + " added as friend!")
 
 def get_friends(userid, con, cur):

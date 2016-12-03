@@ -95,12 +95,17 @@ def initdb():
 	con = sqlite3.connect('db/restaurantPredictions.db')
 
 	rests = con.execute('''SELECT * FROM Restaurants''')
-	nrests = len(rests.fetchall())
+	restos = rests.fetchall()
+	nrests = len(restos)
 
 	rand_users, rand_favorites = generate_users(nrests, 4)
 	rand_friends = generate_friends(len(rand_users), 4)
 
-	# con.execute('DROP TABLE IF EXISTS Users')
+	print("****RESTAURANTS****")
+	for rest in restos:
+		print('RestaurantId: {}, Name: {}, Price: {}, Lat: {}, Lng: {}, Rating: {}').format(rest[0], rest[1], rest[2], rest[3], rest[4], rest[5])
+
+	con.execute('DROP TABLE IF EXISTS Users')
 	con.execute('''CREATE TABLE Users
 		(UserId 		INTEGER PRIMARY KEY     AUTOINCREMENT,
 			Name           TEXT    NOT NULL,
@@ -121,11 +126,12 @@ def initdb():
 
 	con.commit()
 
+	print("****USERS****")
 	users = con.execute('''SELECT * FROM Users''')
 	for user in users:
 		print('UserId: {}, Name: {}, Age: {}, Gender: {}').format(user[0], user[1], user[2], user[3])
 	
-	# con.execute('DROP TABLE IF EXISTS Favorites')
+	con.execute('DROP TABLE IF EXISTS Favorites')
 	con.execute('''CREATE TABLE Favorites
 		(UserId		INTEGER 	NOT NULL,
 			RestaurantId           	INTEGER 	NOT NULL,
@@ -145,11 +151,12 @@ def initdb():
 
 	con.commit()
 
+	print("****FAVORITES****")
 	favorites = con.execute('''SELECT * FROM Favorites''')
 	for favorite in favorites:
 		print('UserId: {}, RestaurantId: {}').format(favorite[0], favorite[1])
 
-	# con.execute('DROP TABLE IF EXISTS Friends')	
+	con.execute('DROP TABLE IF EXISTS Friends')	
 	con.execute('''CREATE TABLE Friends
 		(UserId1		INTEGER 	NOT NULL,
 			UserId2           	INTEGER 	NOT NULL,
@@ -167,6 +174,7 @@ def initdb():
 
 	con.commit()
 
+	print("****FRIENDS****")
 	friends = con.execute('''SELECT * FROM Friends''')
 	for friend in friends:
 		print('UserId1: {}, UserId2: {}').format(friend[0], friend[1])
