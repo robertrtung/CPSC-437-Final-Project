@@ -4,7 +4,6 @@ import computations
 import config
 import pca
 
-
 '''
 Initialize database by connecting to restaurantPredictions.db file.
 Return connection to database
@@ -170,6 +169,9 @@ def output(places, cur):
 			print('')
 			i += 1
 
+'''
+Get user input for type of recommendation
+'''
 def rec_type(userid, con, cur):
 	print('Based on what should we choose your recommendations?\n\t(A) What I favorited\n\t(B) What my friends favorited\n\t(C) What people like me favorited')
 	try:
@@ -177,19 +179,23 @@ def rec_type(userid, con, cur):
 	except EOFError:
 		return -1
 
+	# return recommendations or error if not one of the options
 	options = ['A', 'B', 'C']
-	# TODO: verify calls
 	if (choice in options):
-		# print('Recommendations based on ' + choice + ' {}').format(options.index(choice))
 		return get_recommendations(userid, con, cur, options.index(choice))
 	else:	
 		return -1
 
+'''
+Allow user to choose between different actions
+'''
 def actions(userid, name, age, gender, con, cur):
 	while(True):
 		try:
 			print('What now?\n\t(A) Recommend restaurants\n\t(B) List my favorites\n\t(C) List my friends\n\t(D) Add a favorite\n\t(E) Add a friend\n\t(F) Done!')
 			action = raw_input().upper()
+			
+			# Recommend restaurants
 			if (action == 'A'):
 				choice = rec_type(userid, con, cur)
 				while (choice == -1):
@@ -197,21 +203,25 @@ def actions(userid, name, age, gender, con, cur):
 					choice = rec_type(userid, con, cur)
 				else:
 					output(choice, cur)
+
+			# List my favorites
 			elif (action == 'B'):
 				print('Here are your favorites:')
-				'''Query DB for favorites based on username'''
+				# Query DB for favorites based on username
 				favorites = get_favorites(userid, con, cur)
 				output(favorites, cur)
 
+			# List my friends
 			elif (action == 'C'):
 				print('Here are your friends:')
-				'''Query DB for friends based on username'''
+				# Query DB for friends based on username
 				friends = get_friends(userid, con, cur)
 				i = 1
 				for friend in friends:
 					print('{}. ' + friend).format(i)
 					i += 1
 
+			# Add a favorite
 			elif (action == 'D'):
 				print('Which restaurant would you like to favorite?')
 				try:
@@ -219,18 +229,21 @@ def actions(userid, name, age, gender, con, cur):
 				except EOFError:
 					finished()
 
-				'''Add restaurant as favorite for username'''
+				# Add restaurant as favorite for username
 				add_favorite(userid, con, cur, rest_name)
 
+			# Add a friend
 			elif (action == 'E'):
 				print('Who would you like to friend?')
-				'''Add friend as friend of user'''
 				try:
 					friend_name = raw_input()
 				except EOFError:
 					finished()
+
+				# Add friend as friend of user
 				add_friend(userid, con, cur, friend_name)
 
+			# Exit program
 			elif (action == 'F'):
 				finished()
 
@@ -239,31 +252,46 @@ def actions(userid, name, age, gender, con, cur):
 		except EOFError:
 			finished()
 
+'''
+User pca to get recommendations based on favorites
+'''
 def get_pca_recommendations(userid, con, cur):
 	return pca.pca(userid, con, cur)
 
+'''
+Get different recommendations based on criteria
+'''
 def get_recommendations(userid, con, cur, which):
+	# based on favorites
 	if which == 0:
-		# personal = True
-		# ageGender = False
-		# friends = False
 		return get_pca_recommendations(userid, con, cur)
+
+	# friends' favorites
 	elif which == 1:
 		personal = False
 		ageGender = True
 		friends = False
+
+	# favorites of people like user
 	elif which == 2:
 		personal = False
 		ageGender = False
 		friends = True
+
 	recs = computations.compute_personal_recs(userid, 5, con, cur, personal, ageGender, friends)[which]
 	return recs
 
+'''
+Query DB for user's favorites
+'''
 def get_favorites(userid, con, cur):
 	cur.execute("SELECT * FROM Restaurants, Favorites WHERE Restaurants.rowid=Favorites.RestaurantId and UserId=?", [userid])
 	fav = cur.fetchall()
 	return fav;
 
+'''
+Insert favorite into Favorites table
+'''
 def add_favorite(userid, con, cur, rest_name):
 	cur.execute("SELECT RestaurantId FROM Restaurants WHERE Name=?", [rest_name])
 	fav = cur.fetchall()
@@ -274,7 +302,11 @@ def add_favorite(userid, con, cur, rest_name):
 	con.commit()
 	print(rest_name + " favorited!")
 
+'''
+Insert friend into Friends table
+'''
 def add_friend(userid, con, cur, friend):
+	# Check that friend is an existing user
 	cur.execute("SELECT UserId FROM Users WHERE Name=?", [friend])
 	new_friend = cur.fetchall()
 	if (len(new_friend) == 0):
@@ -284,6 +316,9 @@ def add_friend(userid, con, cur, friend):
 	con.commit()
 	print(friend + " added as friend!")
 
+'''
+Query DB for user's friends
+'''
 def get_friends(userid, con, cur):
 	friends = list()
 	others = cur.execute("SELECT Name FROM Users, Friends WHERE UserId1=? and UserId2=UserId", [userid])
