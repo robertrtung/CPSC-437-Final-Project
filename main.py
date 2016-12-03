@@ -173,7 +173,7 @@ def output(places, cur):
 Get user input for type of recommendation
 '''
 def rec_type(userid, con, cur):
-	print('Based on what should we choose your recommendations?\n\t(A) What I favorited\n\t(B) What my friends favorited\n\t(C) What people like me favorited')
+	print('Based on what should we choose your recommendations?\n\t(A) What I favorited\n\t(B) What people like me favorited\n\t(C) What my friends favorited')
 	try:
 		choice = raw_input().upper()
 	except EOFError:
