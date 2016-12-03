@@ -313,6 +313,7 @@ def add_friend(userid, con, cur, friend):
 		print("Uh oh, we've never heard of " + rest_name)
 		return
 	con.execute("INSERT INTO Friends(UserId1, UserId2) VALUES (?, ?)", [userid, new_friend[0][0]])
+	con.execute("INSERT INTO Friends(UserId1, UserId2) VALUES (?, ?)", [new_friend[0][0], userid])
 	con.commit()
 	print(friend + " added as friend!")
 
