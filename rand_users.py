@@ -2,7 +2,7 @@ import numpy as np
 import sqlite3
 
 AGE_MIN = 10
-AGE_MAX = 70
+AGE_MAX = 20
 FAVORITES_MIN = 0
 FAVORITES_MAX = 20
 
