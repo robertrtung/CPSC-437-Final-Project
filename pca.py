@@ -1,4 +1,5 @@
 import sqlite3
+import warnings
 import numpy as np
 from sklearn.decomposition import PCA
 
@@ -24,11 +25,17 @@ def pca(userid, con, cur, nrecommendations=5):
 			y.append(restaurant[3:])
 			y_data.append(restaurant[1:])
 
+	if not X:
+		return []
+
 	X = np.array(X)
 	y = np.array(y)
 
 	pca = PCA()
-	pca.fit(X)
+
+	with warnings.catch_warnings():
+		warnings.filterwarnings('ignore')
+		pca.fit(X)
 
 	recs = sorted([[i[0], np.sum(pca.components_ * i[1])] for i in zip(y_data, y)], 
 		key=lambda x: x[1], reverse=True)[:5]
