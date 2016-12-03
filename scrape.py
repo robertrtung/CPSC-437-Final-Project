@@ -2,11 +2,30 @@ from bs4 import BeautifulSoup
 import csv, re, urllib2, urlparse
 
 def unicode_to_ascii(string):
+	"""
+	Convert Unicode string to ASCII.
+	"""
 	string = re.sub(u'(\u2018|\u2019)', '\'', string)
 	return string.encode('ascii', 'ignore')
 
 class Restaurant:
+	"""
+	A restaurant scraped from Yelp.
+
+	Attributes:
+		url (string): restaurant URL
+		html (str): restaurant HTML
+		name (str): restaurant name
+		price (int): price point ranging from 1-3
+		categories (list): restaurant labels
+		location (list): [latitude, longitude]
+		rating (float): restaurant rating
+		reviews (list): list of [userid, rating] for each user
+	"""
 	def __init__(self, id):
+		"""
+		Connect to Yelp and retrieve name, price, categories, and location.
+		"""
 		self.url = 'https://www.yelp.com/biz/' + id + '?start=0'
 		self.html = urllib2.urlopen(self.url).read()
 		self.soup = BeautifulSoup(self.html, 'lxml')
@@ -28,6 +47,9 @@ class Restaurant:
 		self.reviews = []
 
 	def retr_reviews(self):
+		"""
+		Retrieve ratings and reviews per user.
+		"""
 		html = self.html
 		soup = self.soup
 		reviews = soup.find_all('ul', {'class' : 'reviews'})[0]
@@ -78,6 +100,9 @@ class Restaurant:
 		return self.rating
 
 class NewHaven:
+	"""
+	Get all restaurant ids in New Haven.
+	"""
 	def __init__(self, pages=10):
 		self.restaurants = []
 		self.url = 'https://www.yelp.com/search?find_desc=Restaurants&find_loc=New+Haven,+CT&start='
@@ -95,6 +120,9 @@ class NewHaven:
 		return self.restaurants
 
 def to_csv():
+	"""
+	Write data to CSV.
+	"""
 	r_header = [['rid', 'name', 'price', 'lat', 'lng', 'rating']]
 	r_data = []
 	l_header = [['rid', 'label']]

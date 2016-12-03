@@ -6,6 +6,17 @@ FAVORITES_MIN = 0
 FAVORITES_MAX = 20
 
 def generate_friends(nusers, start_id, connections=250):
+	"""
+	Randomly generate friend connections.
+
+	Parameters:
+		nusers (int): number of users
+		start_id (int): start user id
+		connections (int): number of total connections
+
+	Returns:
+		friends (set): set of tuples (UserId1, UserId2)
+	"""
 	friends = set()
 	for i in xrange(connections):
 		a = np.random.randint(start_id, nusers + start_id)
@@ -16,6 +27,18 @@ def generate_friends(nusers, start_id, connections=250):
 	return friends
 
 def generate_users(nrestaurants, start_id):
+	"""
+	Randomly generate users and their favorite restaurants.
+
+	Parameters:
+		nrestaurants (int): number of restaurants in db
+		start_id (int): start user id
+
+	Returns:
+		users (list): [name, age, gender]
+		favorites (set): set of tuples (UserId, RestaurantId)
+	"""
+
 	names = ['Addison', 'Ashley', 'Ashton', 'Avery', 'Bailey', 'Cameron', 
 		'Carson', 'Carter', 'Casey', 'Corey', 'Dakota', 'Devin', 'Drew', 
 		'Emerson', 'Harley', 'Harper', 'Hayden', 'Hunter', 'Jayden', 'Jamie', 

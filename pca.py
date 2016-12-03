@@ -3,6 +3,10 @@ import numpy as np
 from sklearn.decomposition import PCA
 
 def pca(userid, con, cur, nrecommendations=5):
+	"""
+	Use PCA from sklearn to find attribute weights, then fit model onto 
+	other restaurants to make recommendations based on a user's favorites.
+	"""
 	favorites = set()
 	favorites_query = cur.execute('SELECT RestaurantId FROM Favorites WHERE UserId = ?', [userid])
 	for favorite in favorites_query:
