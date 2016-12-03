@@ -120,7 +120,7 @@ def output(places):
 def rec_type(userid, con, cur):
 	print('Based on what should we choose your recommendations?\n\t(A) What I favorited\n\t(B) What my friends favorited\n\t(C) What people like me favorited')
 	try:
-		choice = raw_input()
+		choice = raw_input().upper()
 	except EOFError:
 		return -1
 
@@ -145,13 +145,13 @@ def actions(userid, name, age, gender, con, cur):
 				else:
 					output(choice)
 			elif (action == 'B'):
-				print('Here are you favorites:')
+				print('Here are your favorites:')
 				'''Query DB for favorites based on username'''
 				favorites = get_favorites(userid, con, cur)
 				output(favorites)
 
 			elif (action == 'C'):
-				print('Here are you friends:')
+				print('Here are your friends:')
 				'''Query DB for friends based on username'''
 				friends = get_friends(userid, con, cur)
 				i = 1
@@ -191,9 +191,10 @@ def get_pca_recommendations(userid, con, cur):
 
 def get_recommendations(userid, con, cur, which):
 	if which == 0:
-		personal = True
-		ageGender = False
-		friends = False
+		# personal = True
+		# ageGender = False
+		# friends = False
+		return get_pca_recommendations(userid, con, cur)
 	elif which == 1:
 		personal = False
 		ageGender = True
@@ -206,7 +207,7 @@ def get_recommendations(userid, con, cur, which):
 	return recs
 
 def get_favorites(userid, con, cur):
-	cur.execute("SELECT * FROM Restaurants, Favorites WHERE Restaurants.RestaurantId=Favorites.RestaurantId and UserId=?", [userid])
+	cur.execute("SELECT * FROM Restaurants, Favorites WHERE Restaurants.rowid=Favorites.RestaurantId and UserId=?", [userid])
 	fav = cur.fetchall()
 	return fav;
 
