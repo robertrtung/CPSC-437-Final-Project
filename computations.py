@@ -231,10 +231,10 @@ def find_most_common(rests, numRecs):
 			# check if the amount is already a key in the dictionary
 			# add it if not, and if so just change the right key to map to this restaurant
 			amount_to_rest[rest_to_amount[rest] - 1].remove(rest)
-			if rest_to_amount[rest] in amount_to_rest:
+			if rest_to_amount[rest] < len(amount_to_rest):
 				amount_to_rest[rest_to_amount[rest]].append(rest)
 			else:
-				amount_to_rest[rest_to_amount[rest]] = [rest]
+				amount_to_rest.append([rest])
 		else:
 			# if we have not seen the restaurant before then just add it to the amount 1
 			amount_to_rest[1].append(rest)
