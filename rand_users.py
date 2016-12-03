@@ -1,4 +1,5 @@
 import numpy as np
+import sqlite3
 
 AGE_MIN = 10
 AGE_MAX = 70
@@ -24,9 +25,10 @@ def generate_friends(nusers, start_id, connections=250):
 		while b == a:
 			b = np.random.randint(1, nusers)
 		friends.add(tuple(sorted((a, b))))
+		friends.add(tuple(sorted((a, b), reverse=True)))
 	return friends
 
-def generate_users(nrestaurants, start_id):
+def generate_users(start_id, con):
 	"""
 	Randomly generate users and their favorite restaurants.
 
@@ -38,6 +40,7 @@ def generate_users(nrestaurants, start_id):
 		users (list): [name, age, gender]
 		favorites (set): set of tuples (UserId, RestaurantId)
 	"""
+	cur = con.cursor()
 
 	names = ['Addison', 'Ashley', 'Ashton', 'Avery', 'Bailey', 'Cameron', 
 		'Carson', 'Carter', 'Casey', 'Corey', 'Dakota', 'Devin', 'Drew', 
@@ -51,13 +54,21 @@ def generate_users(nrestaurants, start_id):
 	users = []
 	favorites = set()
 
+	cur.execute("SELECT RestaurantId FROM Restaurants")
+	rests = [rest[0] for rest in cur.fetchall()]
+
 	for i in xrange(len(names)):
 		age = np.random.randint(AGE_MIN, AGE_MAX)
 		gender = np.random.choice(['Male', 'Female'])
 		nfavorites = np.random.randint(FAVORITES_MIN, FAVORITES_MAX)
-		user_favorites = np.random.choice(np.arange(1, nrestaurants), nfavorites).tolist()
+		user_favorites = np.random.choice(np.arange(0, len(rests)) - 1, nfavorites).tolist()
 		users.append([names[i], age, gender])
 		for f in user_favorites:
-			favorites.add((i + start_id, f))
+			favorites.add((i + start_id, rests[f]))
 
 	return users, favorites
+
+if __name__ == "__main__":
+	con = sqlite3.connect('db/restaurantPredictions.db')
+	cur = con.cursor()
+	print generate_users(4, con, cur)

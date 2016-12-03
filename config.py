@@ -2,6 +2,7 @@ import sqlite3
 import sys
 import os
 from rand_users import *
+import numpy as np
 
 def main():
 	# Debugging with mock data
@@ -110,7 +111,8 @@ def initdb():
 	nrests = len(restos)
 
 	# Generate random users, favorites, and friends
-	rand_users, rand_favorites = generate_users(nrests, 4)
+	np.random.seed(1)
+	rand_users, rand_favorites = generate_users(4, con)
 	rand_friends = generate_friends(len(rand_users), 4)
 
 	# Print restaurants loaded
@@ -156,11 +158,11 @@ def initdb():
 	print "Favorites table created successfully";
 
 	con.execute('''INSERT INTO Favorites(UserId, RestaurantId)
-					VALUES (1, 1);''')
+					VALUES (1, 'new-haven-taste-of-china-new-haven');''')
 	con.execute('''INSERT INTO Favorites(UserId, RestaurantId)
-					VALUES (2, 8);''')
+					VALUES (2, 'pitaziki-mediterranean-grill-new-haven');''')
 	con.execute('''INSERT INTO Favorites(UserId, RestaurantId)
-					VALUES (3, 9);''')
+					VALUES (3, 'mecha-noodle-bar-new-haven');''')
 
 	# Insert random favorites
 	for f in rand_favorites:

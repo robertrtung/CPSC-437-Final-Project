@@ -285,7 +285,7 @@ def get_recommendations(userid, con, cur, which):
 Query DB for user's favorites
 '''
 def get_favorites(userid, con, cur):
-	cur.execute("SELECT * FROM Restaurants, Favorites WHERE Restaurants.rowid=Favorites.RestaurantId and UserId=?", [userid])
+	cur.execute("SELECT * FROM Restaurants, Favorites WHERE Restaurants.RestaurantId=Favorites.RestaurantId and UserId=?", [userid])
 	fav = cur.fetchall()
 	return fav;
 

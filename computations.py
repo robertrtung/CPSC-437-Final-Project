@@ -255,7 +255,6 @@ def find_most_common(rests, numRecs):
 				break
 		if numRecd == 0:
 			break;
-
 	return out
 
 
