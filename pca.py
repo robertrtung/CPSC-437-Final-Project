@@ -13,17 +13,17 @@ def pca(userid, con, cur, nrecommendations=5):
 	for favorite in favorites_query:
 		favorites.add(favorite[0])
 
-	restaurants = cur.execute('SELECT rowid, * FROM restaurants')
+	restaurants = cur.execute('SELECT * FROM restaurants')
 	X = []
 	y = []
 	y_data = []
 
 	for restaurant in restaurants:
 		if restaurant[0] in favorites:
-			X.append(restaurant[3:])
+			X.append(restaurant[2:])
 		else:
-			y.append(restaurant[3:])
-			y_data.append(restaurant[1:])
+			y.append(restaurant[2:])
+			y_data.append(restaurant)
 
 	if not X:
 		return []
