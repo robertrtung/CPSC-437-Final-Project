@@ -4,80 +4,111 @@ import computations
 import config
 import pca
 
+
+'''
+Initialize database by connecting to restaurantPredictions.db file.
+Return connection to database
+'''
 def initdb():
 	con = sqlite3.connect('db/restaurantPredictions.db')
 	cur = con.cursor()
 	return con
 
+'''
+Prompt user to choose to sign in or register as a new user.
+Reads input and checks if user already exists.
+Inserts new user into table if registering.
+Return user info or error.
+'''
 def sign_in(con, cur):
+	# prompt user
 	print('(A) Sign In (B) Register')
  	try:
  		next = raw_input().upper()
  	except EOFError:
  		exit()
  
+ 	# signing in as existing user
  	if (next == 'A'):
  		username = input_name()
  		print('Signing in as ' + username)
  
+ 		# check if user already exists
  		cur.execute('SELECT * FROM Users WHERE Name=?', [username])
  		me = cur.fetchall()
+
+ 		# return error if no user matches username
  		if (len(me) == 0):
  			print('User does not exist')
  			return -1
+
+ 		# return user info if user found
  		return me[0]
  
+ 	# registering as new user
  	elif (next == 'B'):
  		username = input_name()
+
+ 		# check if user with this name already exists
  		cur.execute('SELECT * FROM Users WHERE Name=?', [username])
  		me = cur.fetchall()
+
+ 		# return error if redundant username
  		if (len(me) != 0):
  			print('Username is already taken')
  			return -1
  
+ 		# get user info on age
  		print('How old are you?')
  		try:
  			age = raw_input()
  		except EOFError:
  			exit()
  
+ 		# check age is an int
  		try:
  			age_num = int(age)
  		except ValueError:
  			print('Please enter an integer age')
  			return -1
  
+ 		# get user info on age and gender
  		print('What is your gender?')
  		try:
  			gender = raw_input()
  		except EOFError:
  			exit()
  
+ 		# insert new user into Users table
  		cur.execute('''INSERT INTO Users(Name, Age, Gender)
  			VALUES (?, ?, ?);''', [username, age_num, gender])
  		con.commit()
  
- 		# Testing insertion
- 		cur.execute('''SELECT * FROM Users''')
- 		users = cur.fetchall()
- 		for user in users:
- 			print('UserId: {}, Name: {}, Age: {}, Gender: {}').format(user[0], user[1], user[2], user[3])
+ 		# debugging test for insertion
+ 		# cur.execute('''SELECT * FROM Users''')
+ 		# users = cur.fetchall()
+ 		# for user in users:
+ 		# 	print('UserId: {}, Name: {}, Age: {}, Gender: {}').format(user[0], user[1], user[2], user[3])
  
+ 		# get user info for session, includes assigned userid
  		cur.execute('SELECT * FROM Users WHERE Name=?', [username])
  		me = cur.fetchall()
+
+ 		# return error if somehow insertion failed
  		if (len(me) == 0):
  			print('Registration failed')
  			return -1
  		return me[0]
  
  	else:
+ 		# error if other letter entered
  		print('Please choose A or B.')
  		return -1
 
+'''
+Grab the username from input
+'''
 def input_name():
- 	'''
- 	Grab the username from input
- 	'''
  	print('What is your name?')
  	try:
  		username = raw_input()
@@ -85,36 +116,58 @@ def input_name():
  		exit()
  	return username
 
+'''
+Print message and exit
+'''
 def finished():
 	print('Eat up!')
 	exit()
 
+'''
+Connect to database and provide UI functionality.
+'''
 def main():
+	# connect to database
 	con = initdb()
 	cur = con.cursor()
 
 	print('Welcome!')
 
+	# sign in until success
 	result = sign_in(con, cur)
 	while (result == -1):
 		result = sign_in(con, cur)
 
-	for attr in result:
-		print(attr)
+	# debugging test for successful signin
+	# for attr in result:
+	# 	print(attr)
 
+	# store user info for recommendation calculations
 	UserId = result[0]
 	Name = result[1]
 	Age = result[2]
 	Gender = result[3]
 
-	# computations.compute_recs(username)
+	# allow user to request recommendations, add friends, add favorites
 	actions(UserId, Name, Age, Gender, con, cur)
 
-def output(places):
+'''
+Print restauants with name, price, rating and labels
+'''
+def output(places, cur):
 	i = 1
 	for place in places:
 		if place:
+			# print restaurant info
 			print('{}.' + place[1] + '\n\t Price: {}\n\t Rating: {}').format(i, '$' * place[2], round(place[5], 2))
+			cur.execute("SELECT Label FROM labels WHERE RestaurantId = ?", [place[0]])
+			labels = cur.fetchall()
+			
+			# print labels
+			print ('\t Labels:'),
+			for label in labels:
+				print('{},').format(label[0]),
+			print('')
 			i += 1
 
 def rec_type(userid, con, cur):
@@ -143,12 +196,12 @@ def actions(userid, name, age, gender, con, cur):
 					print('Please choose A, B, or C.')
 					choice = rec_type(userid, con, cur)
 				else:
-					output(choice)
+					output(choice, cur)
 			elif (action == 'B'):
 				print('Here are your favorites:')
 				'''Query DB for favorites based on username'''
 				favorites = get_favorites(userid, con, cur)
-				output(favorites)
+				output(favorites, cur)
 
 			elif (action == 'C'):
 				print('Here are your friends:')
